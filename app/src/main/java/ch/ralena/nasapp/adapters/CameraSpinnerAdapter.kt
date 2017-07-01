@@ -12,10 +12,8 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.imageResource
 import org.jetbrains.anko.layoutInflater
 
+val roverNames: Array<String> = arrayOf("Curiosity", "Opportunity", "Spirit")
 class CameraSpinnerAdapter(context: Context, resource: Int, cameraNames: Array<String>) : ArrayAdapter<String>(context, resource, cameraNames) {
-	companion object {
-		val cameraNames: Array<String> = arrayOf("Curiosity", "Opportunity", "Spirit")
-	}
 
 	val cameraImages: IntArray = intArrayOf(R.drawable.curiosity, R.drawable.opportunity, R.drawable.spirit)
 
@@ -34,10 +32,10 @@ class CameraSpinnerAdapter(context: Context, resource: Int, cameraNames: Array<S
 	}
 
 	private fun createView(parent: ViewGroup?, position: Int): View {
-		val view = inflater!!.inflate(R.layout.item_camera, parent, false)
+		val view = inflater!!.inflate(R.layout.item_rover, parent, false)
 		val cameraName = view.find<TextView>(R.id.cameraName)
 		val cameraImage = view.find<ImageView>(R.id.cameraImage)
-		cameraName.text = cameraNames[position]
+		cameraName.text = roverNames[position]
 		cameraImage.imageResource = cameraImages[position]
 		return view
 	}
