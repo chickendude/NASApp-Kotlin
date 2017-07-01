@@ -5,14 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import android.widget.TextView
 import ch.ralena.nasapp.R
-import ch.ralena.nasapp.fragments.cameraNames
+import ch.ralena.nasapp.fragments.roverNames
 import org.jetbrains.anko.find
+import org.jetbrains.anko.imageResource
 import org.jetbrains.anko.layoutInflater
 
-class CameraSpinnerAdapter(context: Context, resource: Int, var cameras: ArrayList<String>) :
-		ArrayAdapter<String>(context, resource, cameras) {
+class RoverSpinnerAdapter(context: Context, resource: Int, cameraNames: Array<String>) : ArrayAdapter<String>(context, resource, cameraNames) {
+
+	val cameraImages: IntArray = intArrayOf(R.drawable.curiosity, R.drawable.opportunity, R.drawable.spirit)
 
 	var inflater: LayoutInflater? = null
 
@@ -20,13 +23,8 @@ class CameraSpinnerAdapter(context: Context, resource: Int, var cameras: ArrayLi
 		inflater = context.layoutInflater
 	}
 
-	fun updateCameras(newCameras: ArrayList<String>) {
-		cameras = newCameras
-	}
-
 	override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
 		return createView(parent, position)
-
 	}
 
 	override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup?): View {
@@ -34,14 +32,11 @@ class CameraSpinnerAdapter(context: Context, resource: Int, var cameras: ArrayLi
 	}
 
 	private fun createView(parent: ViewGroup?, position: Int): View {
-		// inflate view
-		val view = inflater!!.inflate(R.layout.item_camera, parent, false)
-		// set up views
-		val abbreviation = view.find<TextView>(R.id.abbreviation)
-		val fullName = view.find<TextView>(R.id.fullName)
-		abbreviation.text = cameras[position].toUpperCase() + ":"
-		fullName.text = cameraNames[cameras[position]]
-		// done
+		val view = inflater!!.inflate(R.layout.item_rover, parent, false)
+		val cameraName = view.find<TextView>(R.id.cameraName)
+		val cameraImage = view.find<ImageView>(R.id.cameraImage)
+		cameraName.text = roverNames[position]
+		cameraImage.imageResource = cameraImages[position]
 		return view
 	}
 }
