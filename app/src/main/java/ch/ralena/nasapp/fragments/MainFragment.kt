@@ -14,9 +14,13 @@ class MainFragment : Fragment() {
 
 	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		val view = container?.inflate(R.layout.fragment_main)
-		postcardButton.onClick { loadRoverPostcardFragment() }
 
 		return view
+	}
+
+	override fun onActivityCreated(savedInstanceState: Bundle?) {
+		super.onActivityCreated(savedInstanceState)
+		postcardButton.onClick { loadRoverPostcardFragment() }
 	}
 
 	private fun loadRoverPostcardFragment() {
