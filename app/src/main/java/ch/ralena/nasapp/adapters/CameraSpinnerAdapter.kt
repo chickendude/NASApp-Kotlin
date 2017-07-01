@@ -20,10 +20,6 @@ class CameraSpinnerAdapter(context: Context, resource: Int, var cameras: ArrayLi
 		inflater = context.layoutInflater
 	}
 
-	fun updateCameras(newCameras: ArrayList<String>) {
-		cameras = newCameras
-	}
-
 	override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
 		return createView(parent, position)
 
