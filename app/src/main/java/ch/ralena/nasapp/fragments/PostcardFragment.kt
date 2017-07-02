@@ -2,7 +2,6 @@ package ch.ralena.nasapp.fragments
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,15 +10,9 @@ import android.widget.ArrayAdapter
 import ch.ralena.nasapp.R
 import ch.ralena.nasapp.adapters.CameraSpinnerAdapter
 import ch.ralena.nasapp.adapters.RoverSpinnerAdapter
-import ch.ralena.nasapp.api.nasaApi
 import ch.ralena.nasapp.inflate
-import ch.ralena.nasapp.models.NasaResults
 import kotlinx.android.synthetic.main.fragment_postcard.*
 import org.jetbrains.anko.sdk25.coroutines.onClick
-import org.jetbrains.anko.support.v4.toast
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 val roverNames: Array<String> = arrayOf("Curiosity", "Opportunity", "Spirit")
 val cameraNames: HashMap<String, String> = hashMapOf(
@@ -35,6 +28,10 @@ val cameraNames: HashMap<String, String> = hashMapOf(
 val camerasCuriosity: ArrayList<String> = arrayListOf("fhaz", "rhaz", "mast", "chemcam", "mahli", "mardi", "navcam")
 val camerasOpportunity: ArrayList<String> = arrayListOf("fhaz", "rhaz", "navcam", "pancam", "minites")
 val camerasSpirit: ArrayList<String> = arrayListOf("fhaz", "rhaz", "navcam", "pancam", "minites")
+
+val KEY_CAMERA = "key_camera"
+val KEY_SOL = "key_sol"
+val KEY_ROVER = "key_rover"
 
 class PostcardFragment : Fragment() {
 
@@ -54,7 +51,7 @@ class PostcardFragment : Fragment() {
 		val roverAdapter = RoverSpinnerAdapter(context, R.layout.item_rover, roverNames)
 		roverSpinner.adapter = roverAdapter
 		roverSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-			override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+			override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 				cameras.clear()
 				when (roverNames[position]) {
 					"Curiosity" -> cameras.addAll(camerasCuriosity)
@@ -85,23 +82,18 @@ class PostcardFragment : Fragment() {
 	private fun newSearch() {
 		val rover = roverSpinner.selectedItem.toString().toLowerCase()
 		val camera = cameraSpinner.selectedItem.toString()
-		val sol = Integer.parseInt(dateText.text.toString())
+		val sol = if (dateText.text.toString() == "") 1 else Integer.parseInt(dateText.text.toString())
 
-		nasaApi.getPhotosBySol(rover, sol, camera)
-				.enqueue(object : Callback<NasaResults> {
-					override fun onResponse(call: Call<NasaResults>?, response: Response<NasaResults>?) {
-						if (response!!.isSuccessful) {
-							var nasaResults: NasaResults? = null
-							nasaResults = response.body()
-							nasaResults.photos.forEach { Log.d("PostcardFragment", it.img_src) }
-						} else {
-							toast("There was an error retrieving the search results.")
-						}
-					}
+		val fragment = PostcardPickPhotoFragment()
+		val arguments = Bundle()
+		arguments.putString(KEY_ROVER, rover)
+		arguments.putString(KEY_CAMERA, camera)
+		arguments.putInt(KEY_SOL, sol)
+		fragment.arguments = arguments
 
-					override fun onFailure(p0: Call<NasaResults>?, p1: Throwable?) {
-						toast("There was an error retrieving the search results.")
-					}
-				})
+		fragmentManager.beginTransaction()
+				.replace(R.id.fragmentContainer, fragment)
+				.addToBackStack(null)
+				.commit()
 	}
 }
