@@ -8,9 +8,13 @@ import ch.ralena.nasapp.R
 import ch.ralena.nasapp.inflate
 import ch.ralena.nasapp.models.Photo
 import com.squareup.picasso.Picasso
+import io.reactivex.subjects.PublishSubject
 import org.jetbrains.anko.find
+import org.jetbrains.anko.sdk25.coroutines.onClick
 
 class PostcardPickPhotoAdapter(val photos: ArrayList<Photo>) : RecyclerView.Adapter<PostcardPickPhotoAdapter.ViewHolder>() {
+
+	val subject: PublishSubject<Photo> = PublishSubject.create()
 
 	override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
 		val view = parent!!.inflate(R.layout.item_postcardpickphoto)
@@ -26,7 +30,7 @@ class PostcardPickPhotoAdapter(val photos: ArrayList<Photo>) : RecyclerView.Adap
 	}
 
 
-	class ViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
+	inner class ViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
 		var imageView: ImageView
 
 		init {
@@ -34,6 +38,7 @@ class PostcardPickPhotoAdapter(val photos: ArrayList<Photo>) : RecyclerView.Adap
 		}
 
 		fun bindView(photo: Photo) {
+			imageView.onClick { subject.onNext(photo) }
 			Picasso.with(imageView.context)
 					.load(photo.img_src)
 					.fit()

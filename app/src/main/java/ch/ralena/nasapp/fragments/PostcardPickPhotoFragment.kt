@@ -36,6 +36,7 @@ class PostcardPickPhotoFragment : Fragment() {
 		val adapter = PostcardPickPhotoAdapter(photos)
 		recyclerView.adapter = adapter
 		recyclerView.layoutManager = GridLayoutManager(context, 4)
+		adapter.subject.subscribe { photo -> loadPhoto(photo) }
 
 		nasaApi.getPhotosBySol(rover, sol, camera)
 				.enqueue(object : Callback<NasaResults> {
@@ -61,5 +62,9 @@ class PostcardPickPhotoFragment : Fragment() {
 						toast("There was an error retrieving the search results.")
 					}
 				})
+	}
+
+	private fun loadPhoto(photo: Photo) {
+		toast(photo.img_src)
 	}
 }
