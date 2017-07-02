@@ -19,6 +19,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+val KEY_IMAGE = "key_image"
+
 class PostcardPickPhotoFragment : Fragment() {
 	lateinit var photos: ArrayList<Photo>
 
@@ -66,5 +68,15 @@ class PostcardPickPhotoFragment : Fragment() {
 
 	private fun loadPhoto(photo: Photo) {
 		toast(photo.img_src)
+		val fragment = PhotoDetailFragment()
+		val bundle = Bundle()
+		bundle.putString(KEY_IMAGE, photo.img_src)
+		bundle.putString(KEY_ROVER, photo.rover.name)
+		bundle.putString(KEY_CAMERA, photo.camera.full_name)
+		fragment.arguments = bundle
+		fragmentManager.beginTransaction()
+				.replace(R.id.fragmentContainer, fragment)
+				.addToBackStack(null)
+				.commit()
 	}
 }
