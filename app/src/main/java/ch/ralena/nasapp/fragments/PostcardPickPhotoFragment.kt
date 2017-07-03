@@ -20,6 +20,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 val KEY_IMAGE = "key_image"
+val BACKSTACK_PHOTOPICK = "backstack_photopick"
 
 class PostcardPickPhotoFragment : Fragment() {
 	lateinit var photos: ArrayList<Photo>
@@ -75,8 +76,8 @@ class PostcardPickPhotoFragment : Fragment() {
 		bundle.putString(KEY_CAMERA, photo.camera.full_name)
 		fragment.arguments = bundle
 		fragmentManager.beginTransaction()
-				.replace(R.id.fragmentContainer, fragment)
-				.addToBackStack(null)
+				.replace(R.id.fragmentContainer, fragment, BACKSTACK_PHOTOPICK)
+				.addToBackStack(BACKSTACK_PHOTOPICK)
 				.commit()
 	}
 }

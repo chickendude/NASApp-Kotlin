@@ -1,29 +1,27 @@
 package ch.ralena.nasapp.fragments
 
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import ch.ralena.nasapp.views.PaintView
-import ch.ralena.nasapp.views.paintView
+import ch.ralena.nasapp.R
+import ch.ralena.nasapp.inflate
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
-import org.jetbrains.anko.support.v4.UI
+import kotlinx.android.synthetic.main.fragment_postcardcreate.*
 
 class PostcardCreateFragment : Fragment() {
-	lateinit var paintView: PaintView
 	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-		val ui = UI {
-			paintView = paintView {}
-		}.view
-		var canvas = Canvas()
+		return container!!.inflate(R.layout.fragment_postcardcreate)
+	}
 
+	override fun onActivityCreated(savedInstanceState: Bundle?) {
+		super.onActivityCreated(savedInstanceState)
 		val imageUrl = arguments.getString(KEY_IMAGE)
-		val target: Target = object: com.squareup.picasso.Target {
+		val target: Target = object : com.squareup.picasso.Target {
 			override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
 			}
 
@@ -31,12 +29,11 @@ class PostcardCreateFragment : Fragment() {
 			}
 
 			override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
-				paintView.loadBitmap(bitmap!!)
+				paintImageView.loadBitmap(bitmap!!)
 			}
 		}
 		Picasso.with(context)
 				.load(imageUrl)
 				.into(target)
-		return ui
 	}
 }

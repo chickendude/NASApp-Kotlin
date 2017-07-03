@@ -9,6 +9,7 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_photodetail.*
 
 class PhotoDetailFragment : Fragment() {
+
 	lateinit var imageUrl: String
 
 	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -48,6 +49,7 @@ class PhotoDetailFragment : Fragment() {
 		bundle.putString(KEY_IMAGE, imageUrl)
 		fragment.arguments = bundle
 		fragmentManager.beginTransaction()
+				.addToBackStack(null)
 				.replace(R.id.fragmentContainer, fragment)
 				.commit()
 	}
