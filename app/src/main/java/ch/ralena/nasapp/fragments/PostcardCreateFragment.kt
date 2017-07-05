@@ -1,9 +1,16 @@
 package ch.ralena.nasapp.fragments
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.media.MediaScannerConnection
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.support.v4.app.Fragment
+import android.support.v4.content.FileProvider
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +19,12 @@ import ch.ralena.nasapp.inflate
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import kotlinx.android.synthetic.main.fragment_postcardcreate.*
+import org.jetbrains.anko.sdk25.coroutines.onClick
+import java.io.File
+import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 class PostcardCreateFragment : Fragment() {
 	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -35,5 +48,66 @@ class PostcardCreateFragment : Fragment() {
 		Picasso.with(context)
 				.load(imageUrl)
 				.into(target)
+		createShareButton.onClick {
+			shareImage()
+		}
+	}
+
+	private fun shareImage() {
+		// save image and get path URI
+		val bitmap = paintImageView.paintBitmap
+		val path = saveBitmap(paintImageView.paintBitmap!!)
+		val f = File(path)
+		val imageUri: Uri
+		if (Build.VERSION.SDK_INT >= 24) {
+			imageUri = FileProvider.getUriForFile(
+					context,
+					context.getApplicationContext().getPackageName() + ".provider",
+					f)
+		} else {
+			imageUri = Uri.fromFile(f)
+		}
+
+		Log.d("TAG", imageUri.toString())
+
+		// send share intent
+		val intent = Intent(Intent.ACTION_SEND)
+		intent.type = "text/html"
+		intent.putExtra(Intent.EXTRA_SUBJECT, "Image from Mars Rover")
+		intent.putExtra(Intent.EXTRA_TEXT, "Check out this image from NASA's Mars Rover!")
+		intent.putExtra(Intent.EXTRA_STREAM, imageUri)
+		activity.startActivity(intent)
+
+	}
+
+	private fun saveBitmap(bitmap: Bitmap): String {
+		// Get path to External Storage
+		val directory = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+
+		// Generating a random number to save as image name
+		val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+		val filename = "Image_" + timeStamp + ".png"
+		val file = File(directory, filename)
+		if (file.exists()) {
+			file.delete()
+		}
+		try {
+			val out = FileOutputStream(file)
+			bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+			out.flush()
+			out.close()
+		} catch (e: Exception) {
+			e.printStackTrace()
+		}
+
+		// Tell your media scanner to refresh/scan for new images
+		MediaScannerConnection.scanFile(context,
+				arrayOf<String>(file.toString()), null,
+				object : MediaScannerConnection.OnScanCompletedListener {
+					override fun onScanCompleted(path: String, uri: Uri) {
+						println(path)
+					}
+				})
+		return file.getAbsolutePath()
 	}
 }

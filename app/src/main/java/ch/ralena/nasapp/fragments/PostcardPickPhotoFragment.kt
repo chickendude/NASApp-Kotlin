@@ -3,7 +3,6 @@ package ch.ralena.nasapp.fragments
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -51,7 +50,6 @@ class PostcardPickPhotoFragment : Fragment() {
 								photos.clear()
 								photos.addAll(nasaResults.photos)
 								adapter.notifyDataSetChanged()
-								photos.forEach { Log.d("PickPhotoFragment", it.img_src) }
 							} else {
 								toast("Your search didn't produce any results")
 								fragmentManager.popBackStack()
@@ -68,7 +66,6 @@ class PostcardPickPhotoFragment : Fragment() {
 	}
 
 	private fun loadPhoto(photo: Photo) {
-		toast(photo.img_src)
 		val fragment = PhotoDetailFragment()
 		val bundle = Bundle()
 		bundle.putString(KEY_IMAGE, photo.img_src)

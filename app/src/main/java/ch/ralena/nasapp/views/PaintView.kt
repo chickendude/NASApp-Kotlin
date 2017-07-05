@@ -17,6 +17,7 @@ class PaintView(context: Context, attributeSet: AttributeSet) : ImageView(contex
 	var canvas: Canvas = Canvas()
 	val paint: Paint
 	val textPaint: Paint
+	var paintBitmap: Bitmap? = null
 
 	init {
 		setOnTouchListener(this::onTouch)
@@ -37,6 +38,7 @@ class PaintView(context: Context, attributeSet: AttributeSet) : ImageView(contex
 
 	fun loadBitmap(bitmap: Bitmap) {
 		val mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+		paintBitmap = mutableBitmap
 		canvas = Canvas(mutableBitmap)
 //		canvas.drawBitmap(bitmap, coordMatrix, paint)
 //		canvas.drawText("Wowwww", 20f, 20f, textPaint)
