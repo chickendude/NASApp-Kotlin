@@ -10,12 +10,15 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
+import android.support.v4.graphics.drawable.DrawableCompat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.RelativeLayout
 import ch.ralena.nasapp.R
 import ch.ralena.nasapp.inflate
@@ -65,15 +68,29 @@ class PostcardCreateFragment : Fragment() {
 	}
 
 	fun setupToolButtons() {
-		paintButton.onClick { paintImageView.action = PaintView.ACTION_PAINT }
-		textButton.onClick { paintImageView.action = PaintView.ACTION_TEXT }
+		paintButton.onClick {
+			updateColors(paintButton)
+			paintImageView.action = PaintView.ACTION_PAINT
+		}
+		textButton.onClick {
+			updateColors(textButton)
+			paintImageView.action = PaintView.ACTION_TEXT
+		}
+	}
+
+	private fun updateColors(button: ImageView) {
+		DrawableCompat.setTint(button.drawable, ContextCompat.getColor(getContext(), R.color.colorAccent))
+		if (button != paintButton)
+			DrawableCompat.setTint(paintButton.drawable, ContextCompat.getColor(getContext(), R.color.colorPrimary))
+		if (button != textButton)
+			DrawableCompat.setTint(textButton.drawable, ContextCompat.getColor(getContext(), R.color.colorPrimary))
 	}
 
 	private fun addText(touchX: Int, touchY: Int) {
 		annotations.add(ImageAnnotation(touchX, touchY))
 		val edittext = EditText(context)
 		edittext.setOnFocusChangeListener { view, hasFocus ->
-			if(!hasFocus) {
+			if (!hasFocus) {
 				edittext.clearFocus()
 				if (edittext.text.toString() == "") {
 					imageContainer.removeView(edittext)
