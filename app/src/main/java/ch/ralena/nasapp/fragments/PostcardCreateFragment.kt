@@ -15,8 +15,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.RelativeLayout
 import ch.ralena.nasapp.R
 import ch.ralena.nasapp.inflate
+import ch.ralena.nasapp.objects.ImageAnnotation
+import ch.ralena.nasapp.views.PaintView
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import kotlinx.android.synthetic.main.fragment_postcardcreate.*
@@ -30,6 +34,8 @@ import java.util.*
 
 class PostcardCreateFragment : Fragment() {
 	val TAG = PostcardCreateFragment::class.java.simpleName
+	val annotations: ArrayList<ImageAnnotation> = ArrayList<ImageAnnotation>()
+	val edittexts: ArrayList<EditText> = ArrayList<EditText>()
 
 	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return container!!.inflate(R.layout.fragment_postcardcreate)
@@ -52,9 +58,34 @@ class PostcardCreateFragment : Fragment() {
 		Picasso.with(context)
 				.load(imageUrl)
 				.into(target)
-		createShareButton.onClick {
-			shareImage()
+		setupToolButtons()
+		// get correct coordinates for edittext
+		paintImageView.textSubject.subscribe { coords -> addText(coords[0].toInt(), coords[1].toInt()) }
+		createShareButton.onClick { shareImage() }
+	}
+
+	fun setupToolButtons() {
+		paintButton.onClick { paintImageView.action = PaintView.ACTION_PAINT }
+		textButton.onClick { paintImageView.action = PaintView.ACTION_TEXT }
+	}
+
+	private fun addText(touchX: Int, touchY: Int) {
+		annotations.add(ImageAnnotation(touchX, touchY))
+		val edittext = EditText(context)
+		edittext.setOnFocusChangeListener { view, hasFocus ->
+			if(!hasFocus) {
+				edittext.clearFocus()
+				if (edittext.text.toString() == "") {
+					imageContainer.removeView(edittext)
+				}
+			}
 		}
+		val layoutParams = RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+		layoutParams.setMargins(touchX, touchY, 0, 0)
+		edittext.layoutParams = layoutParams
+		imageContainer.addView(edittext)
+		edittext.requestFocus()
+		edittexts.add(edittext)
 	}
 
 	private fun shareImage() {
@@ -81,7 +112,7 @@ class PostcardCreateFragment : Fragment() {
 			intent.putExtra(Intent.EXTRA_TEXT, "Check out this image from NASA's Mars Rover!")
 			intent.putExtra(Intent.EXTRA_STREAM, imageUri)
 			activity.startActivity(intent)
-		} catch (anf : ActivityNotFoundException) {
+		} catch (anf: ActivityNotFoundException) {
 			toast("It appears you don't have an e-mail app set up.")
 			anf.printStackTrace()
 		}

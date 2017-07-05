@@ -6,9 +6,16 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
+import io.reactivex.subjects.PublishSubject
 import org.jetbrains.anko.imageBitmap
 
 class PaintView(context: Context, attributeSet: AttributeSet) : ImageView(context, attributeSet), View.OnTouchListener {
+	companion object {
+		// constants
+		val ACTION_PAINT = "action_paint"
+		val ACTION_TEXT = "action_text"
+	}
+
 	var coordMatrix: Matrix
 	var downX: Float = 0f
 	var downY: Float = 0f
@@ -18,6 +25,9 @@ class PaintView(context: Context, attributeSet: AttributeSet) : ImageView(contex
 	val paint: Paint
 	val textPaint: Paint
 	var paintBitmap: Bitmap? = null
+	var action: String = ACTION_PAINT
+
+	val textSubject: PublishSubject<FloatArray> = PublishSubject.create()
 
 	init {
 		setOnTouchListener(this::onTouch)
@@ -40,8 +50,6 @@ class PaintView(context: Context, attributeSet: AttributeSet) : ImageView(contex
 		val mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
 		paintBitmap = mutableBitmap
 		canvas = Canvas(mutableBitmap)
-//		canvas.drawBitmap(bitmap, coordMatrix, paint)
-//		canvas.drawText("Wowwww", 20f, 20f, textPaint)
 		imageBitmap = mutableBitmap
 	}
 
@@ -57,6 +65,19 @@ class PaintView(context: Context, attributeSet: AttributeSet) : ImageView(contex
 		coordMatrix.postTranslate(scrollX.toFloat(), scrollY.toFloat())
 		coordMatrix.mapPoints(coords)
 
+		when (action) {
+			ACTION_PAINT -> paint(event, coords)
+			ACTION_TEXT -> text(coords)
+		}
+
+		return true
+	}
+
+	fun text(coords: FloatArray) {
+		textSubject.onNext(coords)
+	}
+
+	private fun paint(event: MotionEvent, coords: FloatArray) {
 		when (event.action) {
 			MotionEvent.ACTION_DOWN -> {
 				downX = coords[0]
@@ -77,7 +98,6 @@ class PaintView(context: Context, attributeSet: AttributeSet) : ImageView(contex
 				invalidate()
 			}
 		}
-		return true
 	}
 }
 

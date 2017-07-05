@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import ch.ralena.nasapp.R
@@ -37,6 +38,16 @@ class PostcardFragment : Fragment() {
 
 	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return container?.inflate(R.layout.fragment_postcard)
+	}
+
+	override fun onPause() {
+		super.onPause()
+		activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+	}
+
+	override fun onResume() {
+		super.onResume()
+		activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 	}
 
 	override fun onActivityCreated(savedInstanceState: Bundle?) {
