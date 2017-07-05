@@ -1,5 +1,6 @@
 package ch.ralena.nasapp.fragments
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
@@ -20,6 +21,7 @@ import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import kotlinx.android.synthetic.main.fragment_postcardcreate.*
 import org.jetbrains.anko.sdk25.coroutines.onClick
+import org.jetbrains.anko.support.v4.toast
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -27,6 +29,8 @@ import java.util.*
 
 
 class PostcardCreateFragment : Fragment() {
+	val TAG = PostcardCreateFragment::class.java.simpleName
+
 	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return container!!.inflate(R.layout.fragment_postcardcreate)
 	}
@@ -55,7 +59,6 @@ class PostcardCreateFragment : Fragment() {
 
 	private fun shareImage() {
 		// save image and get path URI
-		val bitmap = paintImageView.paintBitmap
 		val path = saveBitmap(paintImageView.paintBitmap!!)
 		val f = File(path)
 		val imageUri: Uri
@@ -71,13 +74,17 @@ class PostcardCreateFragment : Fragment() {
 		Log.d("TAG", imageUri.toString())
 
 		// send share intent
-		val intent = Intent(Intent.ACTION_SEND)
-		intent.type = "text/html"
-		intent.putExtra(Intent.EXTRA_SUBJECT, "Image from Mars Rover")
-		intent.putExtra(Intent.EXTRA_TEXT, "Check out this image from NASA's Mars Rover!")
-		intent.putExtra(Intent.EXTRA_STREAM, imageUri)
-		activity.startActivity(intent)
-
+		try {
+			val intent = Intent(Intent.ACTION_SEND)
+			intent.type = "text/html"
+			intent.putExtra(Intent.EXTRA_SUBJECT, "Image from Mars Rover")
+			intent.putExtra(Intent.EXTRA_TEXT, "Check out this image from NASA's Mars Rover!")
+			intent.putExtra(Intent.EXTRA_STREAM, imageUri)
+			activity.startActivity(intent)
+		} catch (anf : ActivityNotFoundException) {
+			toast("It appears you don't have an e-mail app set up.")
+			anf.printStackTrace()
+		}
 	}
 
 	private fun saveBitmap(bitmap: Bitmap): String {
