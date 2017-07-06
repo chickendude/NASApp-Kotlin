@@ -3,9 +3,6 @@
 				android:id="@+id/imageContainer"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
-				android:clickable="true"
-				android:focusable="true"
-				android:focusableInTouchMode="true"
 				android:orientation="vertical">
 
 	<ch.ralena.nasapp.views.PaintView
@@ -23,6 +20,7 @@
 		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
+			android:gravity="center"
 			android:orientation="horizontal">
 
 			<ImageView
@@ -32,18 +30,18 @@
 				android:background="?attr/selectableItemBackgroundBorderless"
 				android:clickable="true"
 				android:padding="4dp"
-				android:tint="@color/colorAccent"
-				android:src="@drawable/button_paint"/>
+				android:src="@drawable/button_paint"
+				android:tint="@color/colorAccent"/>
 
 			<ImageView
 				android:id="@+id/textButton"
-				android:tint="@color/colorPrimary"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:background="?attr/selectableItemBackgroundBorderless"
 				android:clickable="true"
 				android:padding="4dp"
-				android:src="@drawable/button_text"/>
+				android:src="@drawable/button_text"
+				android:tint="@color/colorPrimary"/>
 		</LinearLayout>
 	</ScrollView>
 

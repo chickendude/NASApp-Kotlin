@@ -2,10 +2,12 @@ package ch.ralena.nasapp.views
 
 import android.content.Context
 import android.graphics.*
+import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
+import ch.ralena.nasapp.R
 import io.reactivex.subjects.PublishSubject
 import org.jetbrains.anko.imageBitmap
 
@@ -23,7 +25,7 @@ class PaintView(context: Context, attributeSet: AttributeSet) : ImageView(contex
 	var upY: Float = 0f
 	var canvas: Canvas = Canvas()
 	val paint: Paint
-	val textPaint: Paint
+	var textPaint: Paint
 	var paintBitmap: Bitmap? = null
 	var action: String = ACTION_PAINT
 
@@ -32,7 +34,7 @@ class PaintView(context: Context, attributeSet: AttributeSet) : ImageView(contex
 	init {
 		setOnTouchListener(this::onTouch)
 		coordMatrix = Matrix()
-		// drawing paint
+		// drawing actionPaint
 		paint = Paint()
 		paint.isAntiAlias = true
 		paint.isDither = true
@@ -40,10 +42,8 @@ class PaintView(context: Context, attributeSet: AttributeSet) : ImageView(contex
 		paint.style = Paint.Style.STROKE
 		paint.strokeCap = Paint.Cap.ROUND
 		paint.strokeWidth = 12f
-		// paint for text
+		// actionPaint for actionText
 		textPaint = Paint()
-		textPaint.color = Color.YELLOW
-		textPaint.textSize = 18f
 	}
 
 	fun loadBitmap(bitmap: Bitmap) {
@@ -66,18 +66,24 @@ class PaintView(context: Context, attributeSet: AttributeSet) : ImageView(contex
 		coordMatrix.mapPoints(coords)
 
 		when (action) {
-			ACTION_PAINT -> paint(event, coords)
-			ACTION_TEXT -> text(coords)
+			ACTION_PAINT -> actionPaint(event, coords)
+			ACTION_TEXT -> actionText(coords)
 		}
 
 		return true
 	}
 
-	fun text(coords: FloatArray) {
+	fun addText(x: Float, y: Float, text: String, colorResource: Int = R.color.colorAccent, textSize: Float = 18f) {
+		textPaint.color = ContextCompat.getColor(context, colorResource)
+		textPaint.textSize = textSize
+		canvas.drawText(text, x, y, textPaint)
+	}
+
+	fun actionText(coords: FloatArray) {
 		textSubject.onNext(coords)
 	}
 
-	private fun paint(event: MotionEvent, coords: FloatArray) {
+	private fun actionPaint(event: MotionEvent, coords: FloatArray) {
 		when (event.action) {
 			MotionEvent.ACTION_DOWN -> {
 				downX = coords[0]

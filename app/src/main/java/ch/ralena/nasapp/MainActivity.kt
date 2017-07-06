@@ -1,12 +1,8 @@
 package ch.ralena.nasapp
 
-import android.graphics.Rect
 import android.os.Bundle
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.AppCompatEditText
-import android.view.MotionEvent
-import android.view.View
 import ch.ralena.nasapp.fragments.BACKSTACK_PHOTOPICK
 import ch.ralena.nasapp.fragments.MainFragment
 import org.jetbrains.anko.toast
@@ -47,19 +43,19 @@ class MainActivity : AppCompatActivity(), FragmentManager.OnBackStackChangedList
 		return true
 	}
 
-	override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-		if (ev!!.action == MotionEvent.ACTION_DOWN) {
-			val v: View? = currentFocus
-			if (v is AppCompatEditText) {
-				val rect = Rect()
-				v.getGlobalVisibleRect(rect)
-				if (!rect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
+//	override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+//		if (ev!!.action == MotionEvent.ACTION_DOWN) {
+//			val v: View? = currentFocus
+//			if (v is EditText) {
+//				val rect = Rect()
+//				v.getGlobalVisibleRect(rect)
+//				if (!rect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
 //					v.clearFocus()
 //					val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 //					imm.hideSoftInputFromWindow(v.windowToken, 0)
-				}
-			}
-		}
-		return super.dispatchTouchEvent(ev)
-	}
+//				}
+//			}
+//		}
+//		return super.dispatchTouchEvent(ev)
+//	}
 }
