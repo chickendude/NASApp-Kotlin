@@ -4,13 +4,16 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import ch.ralena.nasapp.R
 import ch.ralena.nasapp.inflate
 import ch.ralena.nasapp.models.Photo
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import io.reactivex.subjects.PublishSubject
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk25.coroutines.onClick
+import org.jetbrains.anko.toast
 
 class PostcardPickPhotoAdapter(val photos: ArrayList<Photo>) : RecyclerView.Adapter<PostcardPickPhotoAdapter.ViewHolder>() {
 
@@ -32,9 +35,11 @@ class PostcardPickPhotoAdapter(val photos: ArrayList<Photo>) : RecyclerView.Adap
 
 	inner class ViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
 		var imageView: ImageView
+		val progressBar: ProgressBar
 
 		init {
 			imageView = itemView!!.find(R.id.imageView)
+			progressBar = itemView.find(R.id.progressBar)
 		}
 
 		fun bindView(photo: Photo) {
@@ -43,7 +48,17 @@ class PostcardPickPhotoAdapter(val photos: ArrayList<Photo>) : RecyclerView.Adap
 					.load(photo.img_src)
 					.fit()
 					.centerCrop()
-					.into(imageView)
+					.into(imageView, object: Callback {
+						override fun onSuccess() {
+							progressBar.visibility = View.GONE
+						}
+
+						override fun onError() {
+							progressBar.visibility = View.GONE
+							imageView.context.toast("There was an error downloading the image")
+						}
+
+					})
 		}
 
 	}

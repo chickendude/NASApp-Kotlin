@@ -44,6 +44,7 @@ class PostcardPickPhotoFragment : Fragment() {
 				.enqueue(object : Callback<NasaResults> {
 					override fun onResponse(call: Call<NasaResults>?, response: Response<NasaResults>?) {
 						if (response!!.isSuccessful) {
+							progressLayout.visibility = View.GONE
 							var nasaResults: NasaResults? = null
 							nasaResults = response.body()
 							if (nasaResults.photos.isNotEmpty()) {
