@@ -1,6 +1,7 @@
 package ch.ralena.nasapp.fragments
 
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
@@ -18,17 +19,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import ch.ralena.nasapp.R
 import ch.ralena.nasapp.inflate
-import ch.ralena.nasapp.objects.ImageAnnotation
 import ch.ralena.nasapp.views.PaintView
-import com.jakewharton.rxbinding2.widget.RxTextView
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import kotlinx.android.synthetic.main.fragment_postcardcreate.*
+import org.jetbrains.anko.backgroundResource
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.support.v4.toast
 import java.io.File
@@ -40,10 +41,15 @@ import java.util.*
 class PostcardCreateFragment : Fragment() {
 	val TAG = PostcardCreateFragment::class.java.simpleName
 	val edittexts: ArrayList<EditText> = ArrayList<EditText>()
+	val paintSizes: ArrayList<ImageView> = ArrayList<ImageView>()
 
 	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-		activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 		return container!!.inflate(R.layout.fragment_postcardcreate)
+	}
+
+	override fun onResume() {
+		super.onResume()
+		activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 	}
 
 	override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -64,6 +70,9 @@ class PostcardCreateFragment : Fragment() {
 				.load(imageUrl)
 				.into(target)
 		setupToolButtons()
+		textSizePicker.minValue = 8
+		textSizePicker.maxValue = 50
+		textSizePicker.value = 18
 		// get correct coordinates for edittext
 		paintImageView.textSubject.subscribe { coords -> addText(coords[0], coords[1]) }
 		createShareButton.onClick { shareImage() }
@@ -71,13 +80,34 @@ class PostcardCreateFragment : Fragment() {
 
 	fun setupToolButtons() {
 		paintButton.onClick {
+			clearAllFocus()
+			// show paint tools/hide text tools
+			paintToolsLayout.visibility = View.VISIBLE
+			textToolsLayout.visibility = View.GONE
+			// make sure paint button is highlighted
 			updateColors(paintButton)
 			paintImageView.action = PaintView.ACTION_PAINT
 		}
 		textButton.onClick {
+			clearAllFocus()
+			// show text tools and hide paint tools
+			paintToolsLayout.visibility = View.GONE
+			textToolsLayout.visibility = View.VISIBLE
 			updateColors(textButton)
 			paintImageView.action = PaintView.ACTION_TEXT
 		}
+
+		// load paint sizes
+		paintSizes.addAll(arrayListOf(paintSizeSmall, paintSizeMediumSmall, paintSizeMediumLarge, paintSizeLarge))
+		paintSizes.forEach {
+			it.onClick {
+
+			}
+		}
+	}
+
+	private fun clearAllFocus() {
+		edittexts.forEach { it.clearFocus() }
 	}
 
 	private fun updateColors(button: ImageView) {
@@ -89,40 +119,45 @@ class PostcardCreateFragment : Fragment() {
 	}
 
 	private fun addText(touchX: Float, touchY: Float) {
-		val imageAnnotation = ImageAnnotation(touchX, touchY)
 		val edittext = EditText(context)
 		// clear focus so that this edittext can receive it
-		edittexts.forEach { it.clearFocus() }
+		clearAllFocus()
 		// clear focus from other edittexts when we click on this one
 		edittext.onClick {
-			edittexts.forEach { it.clearFocus() }
+			clearAllFocus()
 			edittext.requestFocus()
 		}
+		edittext.backgroundResource = 0	// remove underline from edittext
+		edittext.textSize = textSizePicker.value.toFloat()
+		// if we lose focus and the edit text is empty, delete it
 		edittext.setOnFocusChangeListener { view, hasFocus ->
 			if (!hasFocus) {
-				edittext.clearFocus()
-				if (edittext.text.toString() == "") {
+				if (edittext.text.trim().toString() == "") {
 					imageContainer.removeView(edittext)
+					edittexts.remove(edittext)
 				}
 			}
 		}
+		// set up view's layout parameters
 		val layoutParams = RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 		layoutParams.setMargins(touchX.toInt(), touchY.toInt(), 0, 0)
 		edittext.layoutParams = layoutParams
+		// add edittext to the screen
 		imageContainer.addView(edittext)
 		edittext.requestFocus()
+		val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+		imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+
 		edittexts.add(edittext)
-		// update annotations list
-		RxTextView.textChanges(edittext)
-				.subscribe { chars ->
-					imageAnnotation.title = chars.toString()
-				}
 	}
 
 	private fun shareImage() {
-		addTextsToBitmap()
+		clearAllFocus()
 		// save image and get path URI
-		val path = saveBitmap(paintImageView.paintBitmap!!)
+//		val path = saveBitmap(paintImageView.paintBitmap!!)
+		imageContainer.buildDrawingCache()
+		val bitmap = Bitmap.createBitmap(imageContainer.drawingCache)
+		val path = saveBitmap(bitmap)
 		val f = File(path)
 		val imageUri: Uri
 		if (Build.VERSION.SDK_INT >= 24) {
@@ -151,9 +186,14 @@ class PostcardCreateFragment : Fragment() {
 	}
 
 	private fun addTextsToBitmap() {
-		edittexts
-				.filterNot { it.text.trim() == "" }
-				.forEach { paintImageView.addText(it.x, it.y, it.text.toString(), R.color.colorAccent, 30f) }
+//		edittexts
+//				.filterNot { it.text.trim() == "" }
+//				.forEach {
+//					it.isCursorVisible = false
+//					it.buildDrawingCache()
+//					val bitmap = Bitmap.createBitmap(it.drawingCache)
+//					paintImageView.addText(bitmap)
+//				}
 	}
 
 	private fun saveBitmap(bitmap: Bitmap): String {

@@ -5,7 +5,6 @@ import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
 import ch.ralena.nasapp.fragments.BACKSTACK_PHOTOPICK
 import ch.ralena.nasapp.fragments.MainFragment
-import org.jetbrains.anko.toast
 
 class MainActivity : AppCompatActivity(), FragmentManager.OnBackStackChangedListener {
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +34,6 @@ class MainActivity : AppCompatActivity(), FragmentManager.OnBackStackChangedList
 
 	override fun onSupportNavigateUp(): Boolean {
 		if (supportFragmentManager.findFragmentByTag(BACKSTACK_PHOTOPICK) != null) {
-			toast("back")
 			supportFragmentManager.popBackStack(BACKSTACK_PHOTOPICK, FragmentManager.POP_BACK_STACK_INCLUSIVE)
 		} else {
 			supportFragmentManager.popBackStack()

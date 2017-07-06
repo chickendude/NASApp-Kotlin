@@ -2,12 +2,10 @@ package ch.ralena.nasapp.views
 
 import android.content.Context
 import android.graphics.*
-import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
-import ch.ralena.nasapp.R
 import io.reactivex.subjects.PublishSubject
 import org.jetbrains.anko.imageBitmap
 
@@ -73,10 +71,8 @@ class PaintView(context: Context, attributeSet: AttributeSet) : ImageView(contex
 		return true
 	}
 
-	fun addText(x: Float, y: Float, text: String, colorResource: Int = R.color.colorAccent, textSize: Float = 18f) {
-		textPaint.color = ContextCompat.getColor(context, colorResource)
-		textPaint.textSize = textSize
-		canvas.drawText(text, x, y, textPaint)
+	fun addText(textBitmap: Bitmap) {
+		canvas.drawBitmap(textBitmap, Matrix(), null)
 	}
 
 	fun actionText(coords: FloatArray) {
