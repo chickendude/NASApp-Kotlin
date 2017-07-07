@@ -44,11 +44,12 @@ class PaintView(context: Context, attributeSet: AttributeSet) : ImageView(contex
 		textPaint = Paint()
 	}
 
-	fun loadBitmap(bitmap: Bitmap) {
+	fun loadBitmap(bitmap: Bitmap, paintObservable: PublishSubject<Int>) {
 		val mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
 		paintBitmap = mutableBitmap
 		canvas = Canvas(mutableBitmap)
 		imageBitmap = mutableBitmap
+		paintObservable.subscribe { paint.color = it }
 	}
 
 	override fun onDraw(canvas: Canvas?) {

@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.media.MediaScannerConnection
 import android.net.Uri
@@ -28,20 +29,29 @@ import ch.ralena.nasapp.inflate
 import ch.ralena.nasapp.views.PaintView
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
+import eltos.simpledialogfragment.SimpleDialog
+import eltos.simpledialogfragment.color.SimpleColorDialog
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_postcardcreate.*
 import org.jetbrains.anko.backgroundResource
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.support.v4.toast
+import org.jetbrains.anko.textColor
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
 
-class PostcardCreateFragment : Fragment() {
+class PostcardCreateFragment : Fragment(), SimpleDialog.OnDialogResultListener {
+	private val  TAG_PAINTCOLOR: String = "tag_paintcolor"
+	private val  TAG_TEXTCOLOR: String = "tag_textcolor"
 	val TAG = PostcardCreateFragment::class.java.simpleName
 	val edittexts: ArrayList<EditText> = ArrayList<EditText>()
 	val paintSizes: ArrayList<ImageView> = ArrayList<ImageView>()
+	var textColor: Int = Color.BLACK
+	var paintColor: Int = Color.BLACK
+	val paintObservable: PublishSubject<Int> = PublishSubject.create()
 
 	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return container!!.inflate(R.layout.fragment_postcardcreate)
@@ -63,7 +73,7 @@ class PostcardCreateFragment : Fragment() {
 			}
 
 			override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
-				paintImageView.loadBitmap(bitmap!!)
+				paintImageView.loadBitmap(bitmap!!, paintObservable)
 			}
 		}
 		Picasso.with(context)
@@ -104,6 +114,24 @@ class PostcardCreateFragment : Fragment() {
 
 			}
 		}
+		val fragment = this
+		// set up color pickers
+		paintColorPicker.onClick {
+			SimpleColorDialog.build()
+					.title("Paint Color")
+					.colors(fragment.context, SimpleColorDialog.MATERIAL_COLOR_PALLET)
+					.colorPreset(Color.RED)
+					.allowCustom(true)
+					.show(fragment, TAG_PAINTCOLOR)
+		}
+		textColorPicker.onClick {
+			SimpleColorDialog.build()
+					.title("Paint Color")
+					.colors(fragment.context, SimpleColorDialog.MATERIAL_COLOR_PALLET)
+					.colorPreset(Color.BLACK)
+					.allowCustom(true)
+					.show(fragment, TAG_TEXTCOLOR)
+		}
 	}
 
 	private fun clearAllFocus() {
@@ -129,6 +157,7 @@ class PostcardCreateFragment : Fragment() {
 		}
 		edittext.backgroundResource = 0	// remove underline from edittext
 		edittext.textSize = textSizePicker.value.toFloat()
+		edittext.textColor = textColor
 		// if we lose focus and the edit text is empty, delete it
 		edittext.setOnFocusChangeListener { view, hasFocus ->
 			if (!hasFocus) {
@@ -154,7 +183,6 @@ class PostcardCreateFragment : Fragment() {
 	private fun shareImage() {
 		clearAllFocus()
 		// save image and get path URI
-//		val path = saveBitmap(paintImageView.paintBitmap!!)
 		imageContainer.buildDrawingCache()
 		val bitmap = Bitmap.createBitmap(imageContainer.drawingCache)
 		val path = saveBitmap(bitmap)
@@ -179,21 +207,10 @@ class PostcardCreateFragment : Fragment() {
 			intent.putExtra(Intent.EXTRA_TEXT, "Check out this image from NASA's Mars Rover!")
 			intent.putExtra(Intent.EXTRA_STREAM, imageUri)
 			activity.startActivity(intent)
-		} catch (anf: ActivityNotFoundException) {
+		} catch (anfe: ActivityNotFoundException) {
 			toast("It appears you don't have an e-mail app set up.")
-			anf.printStackTrace()
+			anfe.printStackTrace()
 		}
-	}
-
-	private fun addTextsToBitmap() {
-//		edittexts
-//				.filterNot { it.text.trim() == "" }
-//				.forEach {
-//					it.isCursorVisible = false
-//					it.buildDrawingCache()
-//					val bitmap = Bitmap.createBitmap(it.drawingCache)
-//					paintImageView.addText(bitmap)
-//				}
 	}
 
 	private fun saveBitmap(bitmap: Bitmap): String {
@@ -201,7 +218,7 @@ class PostcardCreateFragment : Fragment() {
 		val directory = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
 
 		// Generating a random number to save as image name
-		val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+		val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
 		val filename = "Image_" + timeStamp + ".png"
 		val file = File(directory, filename)
 		if (file.exists()) {
@@ -226,4 +243,19 @@ class PostcardCreateFragment : Fragment() {
 				})
 		return file.getAbsolutePath()
 	}
+
+	override fun onResult(tag: String, which: Int, extras: Bundle): Boolean {
+		if (which == SimpleColorDialog.BUTTON_POSITIVE && tag == TAG_PAINTCOLOR) {
+			paintColor = extras.getInt(SimpleColorDialog.COLOR)
+			paintObservable.onNext(paintColor)
+			DrawableCompat.setTint(paintColorPicker.drawable, paintColor)
+			return true
+		} else if (which == SimpleColorDialog.BUTTON_POSITIVE && tag == TAG_TEXTCOLOR) {
+			textColor = extras.getInt(SimpleColorDialog.COLOR)
+			DrawableCompat.setTint(textColorPicker.drawable, textColor)
+			return true
+		}
+		return false
+	}
+
 }
