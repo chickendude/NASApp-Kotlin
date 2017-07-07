@@ -244,6 +244,7 @@ class PostcardCreateFragment : Fragment(), SimpleDialog.OnDialogResultListener {
 		return file.getAbsolutePath()
 	}
 
+	// results from ColorPicker library
 	override fun onResult(tag: String, which: Int, extras: Bundle): Boolean {
 		if (which == SimpleColorDialog.BUTTON_POSITIVE && tag == TAG_PAINTCOLOR) {
 			paintColor = extras.getInt(SimpleColorDialog.COLOR)

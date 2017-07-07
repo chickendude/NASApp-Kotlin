@@ -14,6 +14,7 @@ import ch.ralena.nasapp.adapters.RoverSpinnerAdapter
 import ch.ralena.nasapp.inflate
 import kotlinx.android.synthetic.main.fragment_postcard.*
 import org.jetbrains.anko.sdk25.coroutines.onClick
+import java.util.*
 
 val roverNames: Array<String> = arrayOf("Curiosity", "Opportunity", "Spirit")
 val cameraNames: HashMap<String, String> = hashMapOf(
@@ -33,8 +34,10 @@ val camerasSpirit: ArrayList<String> = arrayListOf("fhaz", "rhaz", "navcam", "pa
 val KEY_CAMERA = "key_camera"
 val KEY_SOL = "key_sol"
 val KEY_ROVER = "key_rover"
+val KEY_EARTHDATE = "key_earthdate"
 
 class PostcardFragment : Fragment() {
+	var earthDate: Calendar = Calendar.getInstance()
 
 	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return container?.inflate(R.layout.fragment_postcard)
@@ -85,15 +88,56 @@ class PostcardFragment : Fragment() {
 				return view
 			}
 		}
+		solDateSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+			override fun onNothingSelected(p0: AdapterView<*>?) {
+
+			}
+
+			override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+				if (position == 0) {
+					// show sol and hide earth
+					solDateText.visibility = View.VISIBLE
+					earthDateText.visibility = View.INVISIBLE
+				} else {
+					// show earth/hide sol
+					solDateText.visibility = View.INVISIBLE
+					earthDateText.visibility = View.VISIBLE
+				}
+			}
+		}
+
+		// open date picker when clicking on earth date textview
+		updateEarthDate()
+		earthDateText.onClick {
+			val dateFragment = DatePickerFragment()
+			val arguments = Bundle()
+			arguments.putSerializable(KEY_EARTHDATE, earthDate)
+			dateFragment.arguments = arguments
+			// subscribe for results from date picker and update textview
+			dateFragment.observable.subscribe {
+				earthDate = it
+				updateEarthDate()
+			}
+			dateFragment.show(fragmentManager, null)
+		}
 
 		// buttons
 		searchButton.onClick { newSearch() }
 	}
 
+	private fun  updateEarthDate() {
+		val year = earthDate.get(Calendar.YEAR)
+		val month = earthDate.get(Calendar.MONTH)
+		val day = earthDate.get(Calendar.DAY_OF_MONTH)
+		earthDateText.text = "$year-$month-$day"
+	}
+
 	private fun newSearch() {
 		val rover = roverSpinner.selectedItem.toString().toLowerCase()
 		val camera = cameraSpinner.selectedItem.toString()
-		val sol = if (dateText.text.toString() == "") 1 else Integer.parseInt(dateText.text.toString())
+		val isSol = solDateSpinner.selectedItem.toString().toLowerCase().contains("sol")
+		val sol = if (solDateText.text.toString() == "") 1 else Integer.parseInt(solDateText.text.toString())
+		val date = if (earthDateText.text.toString() == "") 1 else Integer.parseInt(earthDateText.text.toString())
 
 		val fragment = PostcardPickPhotoFragment()
 		val arguments = Bundle()
