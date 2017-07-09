@@ -21,14 +21,14 @@ interface NasaApi {
 	@GET("{rover}/photos")
 	fun getPhotosBySol(@Path("rover") rover: String,
 					   @Query("sol") sol: Int,
-					   @Query("camera") camera: String,
+					   @Query("camera") camera: String?,
 					   @Query("page") page: Int = 1,
 					   @Query("api_key") api_key: String = API_KEY): Call<NasaResults>
 
 	@GET("{rover}/photos")
 	fun getPhotosByEarthDate(@Path("rover") rover: String,
 							 @Query("earth_date") earthDate: String,
-							 @Query("camera") camera: String,
+							 @Query("camera") camera: String?,
 							 @Query("page") page: Int = 1,
 							 @Query("api_key") api_key: String = API_KEY): Call<NasaResults>
 }

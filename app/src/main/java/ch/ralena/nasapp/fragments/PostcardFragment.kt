@@ -18,6 +18,7 @@ import java.util.*
 
 val roverNames: Array<String> = arrayOf("Curiosity", "Opportunity", "Spirit")
 val cameraNames: HashMap<String, String> = hashMapOf(
+		"all" to "Search all cameras",
 		"fhaz" to "Front Hazard Avoidance Camera",
 		"rhaz" to "Rear Hazard Avoidance Camera",
 		"mast" to "Mast Camera",
@@ -27,9 +28,9 @@ val cameraNames: HashMap<String, String> = hashMapOf(
 		"navcam" to "Navigation Camera",
 		"pancam" to "Panoramic Camera",
 		"minites" to "Miniature Thermal Emission Spectrometer (Mini-TES)")
-val camerasCuriosity: ArrayList<String> = arrayListOf("fhaz", "rhaz", "mast", "chemcam", "mahli", "mardi", "navcam")
-val camerasOpportunity: ArrayList<String> = arrayListOf("fhaz", "rhaz", "navcam", "pancam", "minites")
-val camerasSpirit: ArrayList<String> = arrayListOf("fhaz", "rhaz", "navcam", "pancam", "minites")
+val camerasCuriosity: ArrayList<String> = arrayListOf("all", "fhaz", "rhaz", "mast", "chemcam", "mahli", "mardi", "navcam")
+val camerasOpportunity: ArrayList<String> = arrayListOf("all", "fhaz", "rhaz", "navcam", "pancam", "minites")
+val camerasSpirit: ArrayList<String> = arrayListOf("all", "fhaz", "rhaz", "navcam", "pancam", "minites")
 
 val KEY_CAMERA = "key_camera"
 val KEY_SOL = "key_sol"
@@ -90,7 +91,7 @@ class PostcardFragment : Fragment() {
 			}
 		}
 		solDateSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-			override fun onNothingSelected(p0: AdapterView<*>?) {
+			override fun onNothingSelected(view: AdapterView<*>?) {
 
 			}
 
@@ -122,6 +123,9 @@ class PostcardFragment : Fragment() {
 			dateFragment.show(fragmentManager, null)
 		}
 
+		// default sol value
+		solDateText.setText("1")
+
 		// buttons
 		searchButton.onClick { newSearch() }
 	}
@@ -143,7 +147,7 @@ class PostcardFragment : Fragment() {
 		val fragment = PostcardPickPhotoFragment()
 		val arguments = Bundle()
 		arguments.putString(KEY_ROVER, rover)
-		arguments.putString(KEY_CAMERA, camera)
+		arguments.putString(KEY_CAMERA, if (camera.toLowerCase() == "all") null else camera)
 		arguments.putInt(KEY_SOL, sol)
 		arguments.putString(KEY_EARTHDATE, date)
 		arguments.putBoolean(KEY_ISSOL, isSol)
