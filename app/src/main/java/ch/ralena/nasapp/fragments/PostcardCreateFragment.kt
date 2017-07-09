@@ -44,13 +44,13 @@ import java.util.*
 
 
 class PostcardCreateFragment : Fragment(), SimpleDialog.OnDialogResultListener {
-	private val  TAG_PAINTCOLOR: String = "tag_paintcolor"
-	private val  TAG_TEXTCOLOR: String = "tag_textcolor"
+	private val TAG_PAINTCOLOR: String = "tag_paintcolor"
+	private val TAG_TEXTCOLOR: String = "tag_textcolor"
 	val TAG = PostcardCreateFragment::class.java.simpleName
 	val edittexts: ArrayList<EditText> = ArrayList<EditText>()
 	val paintSizes: ArrayList<ImageView> = ArrayList<ImageView>()
 	var textColor: Int = Color.BLACK
-	var paintColor: Int = Color.BLACK
+	var paintColor: Int = Color.GREEN
 	val paintObservable: PublishSubject<Int> = PublishSubject.create()
 
 	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -89,6 +89,7 @@ class PostcardCreateFragment : Fragment(), SimpleDialog.OnDialogResultListener {
 	}
 
 	fun setupToolButtons() {
+		DrawableCompat.setTint(paintColorPicker.drawable, paintColor)
 		paintButton.onClick {
 			clearAllFocus()
 			// show paint tools/hide text tools
@@ -110,8 +111,15 @@ class PostcardCreateFragment : Fragment(), SimpleDialog.OnDialogResultListener {
 		// load paint sizes
 		paintSizes.addAll(arrayListOf(paintSizeSmall, paintSizeMediumSmall, paintSizeMediumLarge, paintSizeLarge))
 		paintSizes.forEach {
-			it.onClick {
+			it.onClick { v ->
+				paintSizes.forEach {
+					DrawableCompat.setTint(it.drawable, ContextCompat.getColor(getContext(), R.color.colorPrimary))
+				}
+				DrawableCompat.setTint(it.drawable, ContextCompat.getColor(getContext(), R.color.colorAccent))
 
+				var size = paintSizes.indexOf(it)
+				size = (size + 1) * 7
+				paintImageView.paint.strokeWidth = size.toFloat()
 			}
 		}
 		val fragment = this
@@ -155,7 +163,7 @@ class PostcardCreateFragment : Fragment(), SimpleDialog.OnDialogResultListener {
 			clearAllFocus()
 			edittext.requestFocus()
 		}
-		edittext.backgroundResource = 0	// remove underline from edittext
+		edittext.backgroundResource = 0    // remove underline from edittext
 		edittext.textSize = textSizePicker.value.toFloat()
 		edittext.textColor = textColor
 		// if we lose focus and the edit text is empty, delete it

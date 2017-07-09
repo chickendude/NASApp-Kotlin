@@ -39,7 +39,7 @@ class PaintView(context: Context, attributeSet: AttributeSet) : ImageView(contex
 		paint.color = Color.GREEN
 		paint.style = Paint.Style.STROKE
 		paint.strokeCap = Paint.Cap.ROUND
-		paint.strokeWidth = 12f
+		paint.strokeWidth = 14f
 		// actionPaint for actionText
 		textPaint = Paint()
 	}

@@ -101,10 +101,12 @@
 				<ImageView
 					android:id="@+id/paintSizeSmall"
 					android:layout_width="15dp"
-					android:layout_height="5dp"
+					android:layout_height="15dp"
 					android:background="?attr/selectableItemBackgroundBorderless"
 					android:clickable="true"
-					android:src="@drawable/button_circle"/>
+					android:padding="4dp"
+					android:src="@drawable/button_circle"
+					android:tint="@color/colorPrimary"/>
 
 				<ImageView
 					android:id="@+id/paintSizeMediumSmall"
@@ -112,7 +114,8 @@
 					android:layout_height="10dp"
 					android:background="?attr/selectableItemBackgroundBorderless"
 					android:clickable="true"
-					android:src="@drawable/button_circle"/>
+					android:src="@drawable/button_circle"
+					android:tint="@color/colorAccent"/>
 
 				<ImageView
 					android:id="@+id/paintSizeMediumLarge"
@@ -120,7 +123,8 @@
 					android:layout_height="15dp"
 					android:background="?attr/selectableItemBackgroundBorderless"
 					android:clickable="true"
-					android:src="@drawable/button_circle"/>
+					android:src="@drawable/button_circle"
+					android:tint="@color/colorPrimary"/>
 
 				<ImageView
 					android:id="@+id/paintSizeLarge"
@@ -128,7 +132,8 @@
 					android:layout_height="20dp"
 					android:background="?attr/selectableItemBackgroundBorderless"
 					android:clickable="true"
-					android:src="@drawable/button_circle"/>
+					android:src="@drawable/button_circle"
+					android:tint="@color/colorPrimary"/>
 			</LinearLayout>
 
 			<TextView
