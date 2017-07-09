@@ -35,6 +35,7 @@ val KEY_CAMERA = "key_camera"
 val KEY_SOL = "key_sol"
 val KEY_ROVER = "key_rover"
 val KEY_EARTHDATE = "key_earthdate"
+val KEY_ISSOL = "key_issol"
 
 class PostcardFragment : Fragment() {
 	var earthDate: Calendar = Calendar.getInstance()
@@ -125,7 +126,7 @@ class PostcardFragment : Fragment() {
 		searchButton.onClick { newSearch() }
 	}
 
-	private fun  updateEarthDate() {
+	private fun updateEarthDate() {
 		val year = earthDate.get(Calendar.YEAR)
 		val month = earthDate.get(Calendar.MONTH)
 		val day = earthDate.get(Calendar.DAY_OF_MONTH)
@@ -137,13 +138,15 @@ class PostcardFragment : Fragment() {
 		val camera = cameraSpinner.selectedItem.toString()
 		val isSol = solDateSpinner.selectedItem.toString().toLowerCase().contains("sol")
 		val sol = if (solDateText.text.toString() == "") 1 else Integer.parseInt(solDateText.text.toString())
-		val date = if (earthDateText.text.toString() == "") 1 else Integer.parseInt(earthDateText.text.toString())
+		val date = if (earthDateText.text.toString() == "") "2000-1-1" else earthDateText.text.toString()
 
 		val fragment = PostcardPickPhotoFragment()
 		val arguments = Bundle()
 		arguments.putString(KEY_ROVER, rover)
 		arguments.putString(KEY_CAMERA, camera)
 		arguments.putInt(KEY_SOL, sol)
+		arguments.putString(KEY_EARTHDATE, date)
+		arguments.putBoolean(KEY_ISSOL, isSol)
 		fragment.arguments = arguments
 
 		fragmentManager.beginTransaction()

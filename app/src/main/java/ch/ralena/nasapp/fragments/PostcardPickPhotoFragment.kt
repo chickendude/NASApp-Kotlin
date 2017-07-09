@@ -34,36 +34,45 @@ class PostcardPickPhotoFragment : Fragment() {
 		val rover = arguments.getString(KEY_ROVER)
 		val camera = arguments.getString(KEY_CAMERA)
 		val sol = arguments.getInt(KEY_SOL)
+		val earthDate = arguments.getString(KEY_EARTHDATE)
+		val isSol = arguments.getBoolean(KEY_ISSOL)
+
 		// set up recyclerview
 		val adapter = PostcardPickPhotoAdapter(photos)
 		recyclerView.adapter = adapter
 		recyclerView.layoutManager = GridLayoutManager(context, 4)
 		adapter.subject.subscribe { photo -> loadPhoto(photo) }
 
-		nasaApi.getPhotosBySol(rover, sol, camera)
-				.enqueue(object : Callback<NasaResults> {
-					override fun onResponse(call: Call<NasaResults>?, response: Response<NasaResults>?) {
-						if (response!!.isSuccessful) {
-							progressLayout.visibility = View.GONE
-							var nasaResults: NasaResults? = null
-							nasaResults = response.body()
-							if (nasaResults.photos.isNotEmpty()) {
-								photos.clear()
-								photos.addAll(nasaResults.photos)
-								adapter.notifyDataSetChanged()
-							} else {
-								toast("Your search didn't produce any results")
-								fragmentManager.popBackStack()
-							}
-						} else {
-							toast("There was an error retrieving the search results.")
-						}
+		val apiCall: Call<NasaResults>
+		if (isSol)
+			apiCall = nasaApi.getPhotosBySol(rover, sol, camera)
+		else
+			apiCall = nasaApi.getPhotosByEarthDate(rover, earthDate, camera)
+		// add callback to api call
+		apiCall.enqueue(object : Callback<NasaResults> {
+			override fun onResponse(call: Call<NasaResults>?, response: Response<NasaResults>?) {
+				if (response!!.isSuccessful) {
+					progressLayout.visibility = View.GONE
+					var nasaResults: NasaResults? = null
+					nasaResults = response.body()
+					if (nasaResults.photos.isNotEmpty()) {
+						photos.clear()
+						photos.addAll(nasaResults.photos)
+						adapter.notifyDataSetChanged()
+					} else {
+						toast("Your search didn't produce any results")
+						fragmentManager.popBackStack()
 					}
+				} else {
+					toast("There was an error retrieving the search results.")
+				}
+			}
 
-					override fun onFailure(p0: Call<NasaResults>?, p1: Throwable?) {
-						toast("There was an error retrieving the search results.")
-					}
-				})
+			override fun onFailure(p0: Call<NasaResults>?, p1: Throwable?) {
+				toast("There was an error retrieving the search results.")
+			}
+		})
+
 	}
 
 	private fun loadPhoto(photo: Photo) {
