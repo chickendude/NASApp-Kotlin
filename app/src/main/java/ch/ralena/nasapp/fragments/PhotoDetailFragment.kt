@@ -22,11 +22,13 @@ class PhotoDetailFragment : Fragment() {
 		imageUrl = arguments.getString(KEY_IMAGE)
 		val roverNameText = arguments.getString(KEY_ROVER)
 		val cameraNameText = arguments.getString(KEY_CAMERA)
+		val earthDateText = arguments.getString(KEY_EARTHDATE)
 		Picasso.with(context)
 				.load(imageUrl)
 				.into(imageView)
 		roverName.text = roverNameText
 		cameraName.text = cameraNameText
+		earthDate.text = earthDateText
 	}
 
 	override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

@@ -80,6 +80,7 @@ class PostcardPickPhotoFragment : Fragment() {
 		val bundle = Bundle()
 		bundle.putString(KEY_IMAGE, photo.img_src)
 		bundle.putString(KEY_ROVER, photo.rover.name)
+		bundle.putString(KEY_EARTHDATE, photo.earth_date)
 		bundle.putString(KEY_CAMERA, photo.camera.full_name)
 		fragment.arguments = bundle
 		fragmentManager.beginTransaction()
