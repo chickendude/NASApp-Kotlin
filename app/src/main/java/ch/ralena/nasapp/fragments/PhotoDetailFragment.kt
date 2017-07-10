@@ -6,6 +6,7 @@ import android.view.*
 import ch.ralena.nasapp.R
 import ch.ralena.nasapp.inflate
 import com.squareup.picasso.Callback
+import com.squareup.picasso.OkHttpDownloader
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_photodetail.*
 import org.jetbrains.anko.support.v4.toast
@@ -25,11 +26,12 @@ class PhotoDetailFragment : Fragment() {
 		val roverNameText = arguments.getString(KEY_ROVER)
 		val cameraNameText = arguments.getString(KEY_CAMERA)
 		val earthDateText = arguments.getString(KEY_EARTHDATE)
-		Picasso.with(context)
+		Picasso.Builder(context)
+				.downloader(OkHttpDownloader(context))
+				.build()
 				.load(imageUrl)
 				.into(imageView, object: Callback {
 					override fun onSuccess() {
-						toast("Photo loaded!")
 					}
 
 					override fun onError() {
