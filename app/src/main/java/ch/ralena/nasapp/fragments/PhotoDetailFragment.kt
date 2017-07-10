@@ -5,8 +5,10 @@ import android.support.v4.app.Fragment
 import android.view.*
 import ch.ralena.nasapp.R
 import ch.ralena.nasapp.inflate
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_photodetail.*
+import org.jetbrains.anko.support.v4.toast
 
 class PhotoDetailFragment : Fragment() {
 
@@ -25,7 +27,16 @@ class PhotoDetailFragment : Fragment() {
 		val earthDateText = arguments.getString(KEY_EARTHDATE)
 		Picasso.with(context)
 				.load(imageUrl)
-				.into(imageView)
+				.into(imageView, object: Callback {
+					override fun onSuccess() {
+						toast("Photo loaded!")
+					}
+
+					override fun onError() {
+						toast("Error loading photo.")
+					}
+
+				})
 		roverName.text = roverNameText
 		cameraName.text = cameraNameText
 		earthDate.text = earthDateText

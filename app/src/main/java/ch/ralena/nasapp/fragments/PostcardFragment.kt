@@ -11,9 +11,16 @@ import android.widget.ArrayAdapter
 import ch.ralena.nasapp.R
 import ch.ralena.nasapp.adapters.CameraSpinnerAdapter
 import ch.ralena.nasapp.adapters.RoverSpinnerAdapter
+import ch.ralena.nasapp.api.nasaApi
 import ch.ralena.nasapp.inflate
+import ch.ralena.nasapp.models.NasaManifestResults
+import ch.ralena.nasapp.models.NasaResults
 import kotlinx.android.synthetic.main.fragment_postcard.*
 import org.jetbrains.anko.sdk25.coroutines.onClick
+import org.jetbrains.anko.support.v4.toast
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
 
 val roverNames: Array<String> = arrayOf("Curiosity", "Opportunity", "Spirit")
@@ -128,6 +135,62 @@ class PostcardFragment : Fragment() {
 
 		// buttons
 		searchButton.onClick { newSearch() }
+		randomButton.onClick {
+			val rand = Random()
+			val roverIndex = rand.nextInt(roverNames.size)
+			nasaApi.getRoverManifest(roverNames[roverIndex])
+					.enqueue(object : Callback<NasaManifestResults> {
+						override fun onFailure(p0: Call<NasaManifestResults>?, p1: Throwable?) {
+							toast("The search failed.")
+						}
+
+						override fun onResponse(call: Call<NasaManifestResults>?, response: Response<NasaManifestResults>?) {
+							if (response!!.isSuccessful) {
+								// pull data from results
+								val manifestResults = response.body().photo_manifest
+								val rover = manifestResults.name
+								val cameraObj = manifestResults.photos[rand.nextInt(manifestResults.photos.size)]
+								val camera = cameraObj.cameras[rand.nextInt(cameraObj.cameras.size)]
+								val sol = Integer.parseInt(cameraObj.sol)
+								// now load the picture
+								nasaApi.getPhotosBySol(rover, sol, camera)
+										.enqueue(object : Callback<NasaResults> {
+											override fun onResponse(call: Call<NasaResults>?, response: Response<NasaResults>?) {
+												if (response!!.isSuccessful) {
+													var nasaResults = response.body()
+													if (nasaResults.photos.isNotEmpty()) {
+														val photo = nasaResults.photos[rand.nextInt(nasaResults.photos.size)]
+														// load detail fragment
+														val fragment = PhotoDetailFragment()
+														val bundle = Bundle()
+														bundle.putString(KEY_IMAGE, photo.img_src)
+														bundle.putString(KEY_ROVER, photo.rover.name)
+														bundle.putString(KEY_EARTHDATE, photo.earth_date)
+														bundle.putString(KEY_CAMERA, photo.camera.full_name)
+														fragment.arguments = bundle
+														fragmentManager.beginTransaction()
+																.replace(R.id.fragmentContainer, fragment, BACKSTACK_PHOTOPICK)
+																.addToBackStack(BACKSTACK_PHOTOPICK)
+																.commit()
+													} else {
+														toast("Search didn't produce any results")
+													}
+												} else {
+													toast("There was an error retrieving the search results.")
+												}
+											}
+
+											override fun onFailure(p0: Call<NasaResults>?, p1: Throwable?) {
+												toast("There was an error retrieving the search results.")
+											}
+										})
+							} else {
+								toast("There was an error...")
+							}
+						}
+
+					})
+		}
 	}
 
 	private fun updateEarthDate() {
@@ -138,6 +201,7 @@ class PostcardFragment : Fragment() {
 	}
 
 	private fun newSearch() {
+		// pull data from spinners and edit texts
 		val rover = roverSpinner.selectedItem.toString().toLowerCase()
 		val camera = cameraSpinner.selectedItem.toString()
 		val isSol = solDateSpinner.selectedItem.toString().toLowerCase().contains("sol")
