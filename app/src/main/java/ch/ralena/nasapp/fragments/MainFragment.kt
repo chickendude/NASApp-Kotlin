@@ -21,6 +21,15 @@ class MainFragment : Fragment() {
 	override fun onActivityCreated(savedInstanceState: Bundle?) {
 		super.onActivityCreated(savedInstanceState)
 		postcardButton.onClick { loadRoverPostcardFragment() }
+		eyeButton.onClick { loadEyeInTheSkyFragment() }
+	}
+
+	private fun loadEyeInTheSkyFragment() {
+		val fragment = EyeInTheSkyFragment()
+		fragmentManager.beginTransaction()
+				.replace(R.id.fragmentContainer, fragment)
+				.addToBackStack(null)
+				.commit()
 	}
 
 	private fun loadRoverPostcardFragment() {
