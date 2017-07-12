@@ -1,5 +1,6 @@
 package ch.ralena.nasapp.api
 
+import ch.ralena.nasapp.models.NasaLocationResults
 import ch.ralena.nasapp.models.NasaManifestResults
 import ch.ralena.nasapp.models.NasaResults
 import retrofit2.Call
@@ -24,6 +25,11 @@ var nasaManifestApi: NasaApi = Retrofit.Builder()
 		.build()
 		.create(NasaApi::class.java)
 
+var nasaLocationApi: NasaApi = Retrofit.Builder()
+		.addConverterFactory(MoshiConverterFactory.create())
+		.build()
+		.create(NasaApi::class.java)
+
 interface NasaApi {
 	@GET("rovers/{rover}/photos")
 	fun getPhotosBySol(@Path("rover") rover: String,
@@ -42,5 +48,10 @@ interface NasaApi {
 	@GET("manifests/{rover}/")
 	fun getRoverManifest(@Path("rover") rover: String,
 						 @Query("api_key") api_key: String = API_KEY): Call<NasaManifestResults>
+
+	@GET("https://api.nasa.gov/planetary/earth/imagery/")
+	fun getLocationImage(@Query("lat") latitude: Float,
+						 @Query("lon") longitude: Float,
+						 @Query("api_key") api_key: String = API_KEY): Call<NasaLocationResults>
 
 }

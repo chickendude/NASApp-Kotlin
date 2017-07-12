@@ -7,4 +7,34 @@
 		android:id="@+id/mapView"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"/>
+
+	<EditText
+		android:id="@+id/locationSearchEdit"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:layout_alignTop="@+id/satelliteImage"
+		android:paddingLeft="8dp"
+		android:paddingRight="16dp"
+		android:layout_marginBottom="16dp"
+		android:layout_marginLeft="16dp"
+		android:background="@drawable/bg_edittext"
+		android:layout_toLeftOf="@+id/satelliteImage"/>
+
+	<ImageView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:src="@drawable/button_search"
+		android:layout_alignTop="@id/locationSearchEdit"
+		android:layout_alignBottom="@id/locationSearchEdit"
+		android:layout_alignRight="@id/locationSearchEdit"/>
+	<ImageView
+		android:id="@+id/satelliteImage"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:layout_marginBottom="16dp"
+		android:layout_alignParentRight="true"
+		android:src="@drawable/button_satellite"
+		android:tint="@color/colorPrimary"/>
 </RelativeLayout>

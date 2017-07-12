@@ -60,16 +60,16 @@ class PostcardPickPhotoFragment : Fragment() {
 						photos.addAll(nasaResults.photos)
 						adapter.notifyDataSetChanged()
 					} else {
-						toast("Your search didn't produce any results")
+						toast("Your button_search didn't produce any results")
 						fragmentManager.popBackStack()
 					}
 				} else {
-					toast("There was an error retrieving the search results.")
+					toast("There was an error retrieving the button_search results.")
 				}
 			}
 
 			override fun onFailure(p0: Call<NasaResults>?, p1: Throwable?) {
-				toast("There was an error retrieving the search results.")
+				toast("There was an error retrieving the button_search results.")
 			}
 		})
 

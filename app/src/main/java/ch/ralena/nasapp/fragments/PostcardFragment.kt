@@ -141,7 +141,7 @@ class PostcardFragment : Fragment() {
 			nasaApi.getRoverManifest(roverNames[roverIndex])
 					.enqueue(object : Callback<NasaManifestResults> {
 						override fun onFailure(p0: Call<NasaManifestResults>?, p1: Throwable?) {
-							toast("The search failed.")
+							toast("The button_search failed.")
 						}
 
 						override fun onResponse(call: Call<NasaManifestResults>?, response: Response<NasaManifestResults>?) {
@@ -176,12 +176,12 @@ class PostcardFragment : Fragment() {
 														toast("Search didn't produce any results")
 													}
 												} else {
-													toast("There was an error retrieving the search results.")
+													toast("There was an error retrieving the button_search results.")
 												}
 											}
 
 											override fun onFailure(p0: Call<NasaResults>?, p1: Throwable?) {
-												toast("There was an error retrieving the search results.")
+												toast("There was an error retrieving the button_search results.")
 											}
 										})
 							} else {
