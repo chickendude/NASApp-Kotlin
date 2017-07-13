@@ -22,7 +22,17 @@
 		android:paddingLeft="8dp"
 		android:paddingRight="16dp"/>
 
+	<android.support.v7.widget.RecyclerView
+		android:id="@+id/searchRecyclerView"
+		android:layout_alignLeft="@id/locationSearchEdit"
+		android:layout_alignRight="@id/locationSearchEdit"
+		android:layout_above="@id/locationSearchEdit"
+		android:background="@drawable/bg_location_item"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"/>
+
 	<ImageView
+		android:id="@+id/searchButton"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignBottom="@id/locationSearchEdit"

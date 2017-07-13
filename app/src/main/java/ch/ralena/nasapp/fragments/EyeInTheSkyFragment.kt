@@ -3,17 +3,18 @@ package ch.ralena.nasapp.fragments
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
+import android.location.*
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import android.support.v4.view.GravityCompat
+import android.support.v7.widget.ListPopupWindow
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import ch.ralena.nasapp.R
+import ch.ralena.nasapp.adapters.SearchLocationArrayAdapter
 import ch.ralena.nasapp.inflate
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -23,6 +24,8 @@ import com.google.android.gms.maps.MapsInitializer
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.synthetic.main.fragment_eyeinthesky.*
 import org.jetbrains.anko.sdk25.coroutines.onClick
+import java.util.*
+import kotlin.collections.ArrayList
 
 val KEY_LATITUDE = "key_latitude"
 val KEY_LONGITUDE = "key_longitude"
@@ -31,10 +34,12 @@ class EyeInTheSkyFragment : Fragment() {
 	var hasLocationPermisson = false
 	var locationClient: FusedLocationProviderClient? = null
 	var locationManager: LocationManager? = null
+	var addresses: ArrayList<Address> = ArrayList()
 
 	val REQUEST_FINE_LOCATION = 666
 	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		val view = container!!.inflate(R.layout.fragment_eyeinthesky)
+		// have to manually call all of map view's 'on' methods otherwise it won't work
 		view.findViewById<MapView>(R.id.mapView).onCreate(savedInstanceState)
 		return view
 	}
@@ -45,7 +50,45 @@ class EyeInTheSkyFragment : Fragment() {
 		locationManager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 		MapsInitializer.initialize(context)
 		getLocation()
+		setUpMyLocationButton()
 		satelliteImage.onClick { showImage() }
+		searchButton.onClick { searchLocation() }
+	}
+
+	private fun setUpMyLocationButton() {
+		if (hasLocationPermisson) {
+			mapView.getMapAsync { map ->
+				map.isMyLocationEnabled = true
+				map.setOnMyLocationButtonClickListener {
+					getLocation()
+					true
+				}
+			}
+		}
+	}
+
+	private fun searchLocation() {
+		val searchText = locationSearchEdit.text.toString()
+		val geocoder = Geocoder(context, Locale.getDefault())
+		addresses = geocoder.getFromLocationName(searchText, 10) as ArrayList<Address>
+		if (addresses.size > 0) {
+
+
+			val popup = ListPopupWindow(context)
+			val adapter = SearchLocationArrayAdapter(context, addresses)
+			adapter.observable.subscribe( {
+				val latitude = it.latitude
+				val longitude = it.longitude
+				mapView.getMapAsync { map ->
+					map.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), 12f))
+				}
+				popup.dismiss()
+			})
+			popup.anchorView = locationSearchEdit
+			popup.setAdapter(adapter)
+			popup.setDropDownGravity(GravityCompat.START)
+			popup.show()
+		}
 	}
 
 	private fun showImage() {
@@ -88,9 +131,8 @@ class EyeInTheSkyFragment : Fragment() {
 		if (hasLocationPermisson) {
 			locationManager?.requestSingleUpdate(LocationManager.GPS_PROVIDER, object : LocationListener {
 				override fun onLocationChanged(location: Location?) {
-					mapView.getMapAsync { map ->
-						map.isMyLocationEnabled = true
-						map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location!!.latitude, location.longitude), 12f))
+					mapView?.getMapAsync { map ->
+						map.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location!!.latitude, location.longitude), 12f))
 					}
 				}
 
@@ -103,9 +145,8 @@ class EyeInTheSkyFragment : Fragment() {
 			locationClient?.lastLocation?.addOnSuccessListener {
 				if (it != null) {
 					val currentLocation = LatLng(it.latitude, it.longitude)
-					mapView.getMapAsync { map ->
-						map.isMyLocationEnabled = true
-						map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 12f))
+					mapView?.getMapAsync { map ->
+						map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 12f))
 					}
 				}
 			}
@@ -115,14 +156,7 @@ class EyeInTheSkyFragment : Fragment() {
 	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
 		if (requestCode == REQUEST_FINE_LOCATION && grantResults.contains(PackageManager.PERMISSION_GRANTED)) {
 			hasLocationPermisson = true
-			// enable my location button
-			mapView.getMapAsync { map ->
-				map.isMyLocationEnabled = true
-				map.setOnMyLocationButtonClickListener {
-					getLocation()
-					true
-				}
-			}
+			setUpMyLocationButton()
 			// load current location and go there
 			getLocation()
 		}
