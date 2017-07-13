@@ -13,16 +13,28 @@
 			android:id="@+id/imageView"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			android:scaleType="fitCenter"
 			android:layout_alignParentTop="true"
-			android:contentDescription="Nasa Image"/>
+			android:contentDescription="Nasa Image"
+			android:scaleType="fitStart"/>
 
-		<ProgressBar
-			android:id="@+id/progressBar"
+		<LinearLayout
+			android:id="@+id/progressLayout"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_centerInParent="true"
-			android:padding="150dp"/>
+			android:orientation="vertical">
+
+			<ProgressBar
+				android:layout_width="wrap_content"
+				android:layout_gravity="center"
+				android:layout_height="wrap_content"/>
+
+			<TextView
+				android:id="@+id/progressMessage"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Loading dates..."/>
+		</LinearLayout>
 	</RelativeLayout>
 
 	<TextView

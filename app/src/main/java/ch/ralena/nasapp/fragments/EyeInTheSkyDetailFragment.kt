@@ -61,6 +61,8 @@ class EyeInTheSkyDetailFragment : Fragment() {
 	}
 
 	private fun  loadImage(date: String) {
+		progressLayout.visibility = View.VISIBLE
+		progressMessage.text = "Loading image..."
 		nasaApi.getLocationImage(latitude!!, longitude!!, date)
 				.enqueue(object : retrofit2.Callback<NasaLocationResults> {
 					override fun onFailure(call: Call<NasaLocationResults>?, p1: Throwable?) {
@@ -89,7 +91,7 @@ class EyeInTheSkyDetailFragment : Fragment() {
 				.load(imageUrl)
 				.into(imageView, object : Callback {
 					override fun onSuccess() {
-						progressBar.visibility = View.GONE
+						progressLayout.visibility = View.GONE
 					}
 
 					override fun onError() {
