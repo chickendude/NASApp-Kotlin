@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
 import ch.ralena.nasapp.fragments.BACKSTACK_PHOTOPICK
-import ch.ralena.nasapp.fragments.MainFragment
+import ch.ralena.nasapp.fragments.LandingFragment
 
 class MainActivity : AppCompatActivity(), FragmentManager.OnBackStackChangedListener {
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity(), FragmentManager.OnBackStackChangedList
 		supportFragmentManager.addOnBackStackChangedListener(this::onBackStackChanged)
 
 		// load main fragment
-		val fragment = MainFragment()
+		val fragment = LandingFragment()
 		supportFragmentManager.beginTransaction()
 				.replace(R.id.fragmentContainer, fragment)
 				.commit()
