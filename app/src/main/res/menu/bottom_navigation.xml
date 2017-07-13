@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item
+		android:id="@+id/marsRover"
+		android:title="Mars Rover"
+		android:icon="@drawable/icon_mars_rover"/>
+	<item
+		android:id="@+id/eyeInTheSky"
+		android:title="Eye in the Sky"
+		android:icon="@drawable/icon_mars_rover"/>
+</menu>
