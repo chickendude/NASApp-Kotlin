@@ -13,6 +13,7 @@ import ch.ralena.nasapp.models.NasaLocationResults
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_eyeintheskydetail.*
+import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.support.v4.toast
 import retrofit2.Call
 import retrofit2.Response
@@ -22,6 +23,7 @@ class EyeInTheSkyDetailFragment : Fragment() {
 	var latitude: Float? = null
 	var longitude: Float? = null
 	var dates: ArrayList<String> = ArrayList()
+	var curDateIndex: Int = 0
 
 	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return container!!.inflate(R.layout.fragment_eyeintheskydetail)
@@ -41,6 +43,11 @@ class EyeInTheSkyDetailFragment : Fragment() {
 		val day = calendar.get(Calendar.DAY_OF_MONTH)
 		val beginDate: String = String.format("%d-%d-%d", year, month, day)
 
+		previousDateButton.onClick { loadImage(dates[--curDateIndex]) }
+		nextDateButton.onClick { loadImage(dates[++curDateIndex]) }
+
+
+		// load dates where an image was taken for this location
 		nasaApi.getLocationAssets(latitude!!, longitude!!, beginDate)
 				.enqueue(object : retrofit2.Callback<NasaLocationAssetResults> {
 					override fun onResponse(call: Call<NasaLocationAssetResults>?, results: Response<NasaLocationAssetResults>?) {
@@ -48,9 +55,9 @@ class EyeInTheSkyDetailFragment : Fragment() {
 							// load all the dates into our object
 							dates.clear()
 							results.body().results.forEach { dates.add(it.date) }
+							curDateIndex = dates.size - 1
 							// trim off everything after the T in the returned date string
-							val date = dates.last().substring(0, dates.last().indexOf('T'))
-							loadImage(date)
+							loadImage(dates.last())
 						}
 					}
 
@@ -60,9 +67,28 @@ class EyeInTheSkyDetailFragment : Fragment() {
 				})
 	}
 
-	private fun  loadImage(date: String) {
+	private fun loadImage(fullDate: String) {
+		// make sure the progress bar is being shown
 		progressLayout.visibility = View.VISIBLE
 		progressMessage.text = "Loading image..."
+
+		// check if next date button should be visible or not
+		if (dates.last() == fullDate)
+			nextDateButton.visibility = View.GONE
+		else
+			nextDateButton.visibility = View.VISIBLE
+
+		// check if previous date button should be visible or not
+		if (dates.first() == fullDate)
+			previousDateButton.visibility = View.GONE
+		else
+			previousDateButton.visibility = View.VISIBLE
+
+		val date = fullDate.substring(0, fullDate.indexOf('T'))
+
+		// load date and image
+		dateTakenLabel.text = date
+
 		nasaApi.getLocationImage(latitude!!, longitude!!, date)
 				.enqueue(object : retrofit2.Callback<NasaLocationResults> {
 					override fun onFailure(call: Call<NasaLocationResults>?, p1: Throwable?) {
@@ -83,10 +109,7 @@ class EyeInTheSkyDetailFragment : Fragment() {
 	private fun loadApiResults(results: NasaLocationResults) {
 		// get image url
 		val imageUrl = results.url
-		val dateTaken = results.date
 
-		// load date and image
-		dateTakenLabel.text = dateTaken
 		Picasso.with(context)
 				.load(imageUrl)
 				.into(imageView, object : Callback {
