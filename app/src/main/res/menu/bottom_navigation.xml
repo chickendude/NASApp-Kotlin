@@ -7,5 +7,5 @@
 	<item
 		android:id="@+id/eyeInTheSky"
 		android:title="Eye in the Sky"
-		android:icon="@drawable/icon_mars_rover"/>
+		android:icon="@drawable/icon_eyeinthesky"/>
 </menu>
