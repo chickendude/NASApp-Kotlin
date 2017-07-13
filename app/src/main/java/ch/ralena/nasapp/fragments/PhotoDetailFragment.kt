@@ -37,7 +37,6 @@ class PhotoDetailFragment : Fragment() {
 					override fun onError() {
 						toast("Error loading photo.")
 					}
-
 				})
 		roverName.text = roverNameText
 		cameraName.text = cameraNameText

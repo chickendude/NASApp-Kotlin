@@ -27,6 +27,7 @@ import android.widget.RelativeLayout
 import ch.ralena.nasapp.R
 import ch.ralena.nasapp.inflate
 import ch.ralena.nasapp.views.PaintView
+import com.squareup.picasso.OkHttpDownloader
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import eltos.simpledialogfragment.SimpleDialog
@@ -52,6 +53,22 @@ class PostcardCreateFragment : Fragment(), SimpleDialog.OnDialogResultListener {
 	var textColor: Int = Color.BLACK
 	var paintColor: Int = Color.GREEN
 	val paintObservable: PublishSubject<Int> = PublishSubject.create()
+	val target: Target
+
+	init {
+		target = object : com.squareup.picasso.Target {
+			override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
+			}
+
+			override fun onBitmapFailed(errorDrawable: Drawable?) {
+				Log.d("tag", "failed")
+			}
+
+			override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+				paintImageView.loadBitmap(bitmap!!, paintObservable)
+			}
+		}
+	}
 
 	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return container!!.inflate(R.layout.fragment_postcardcreate)
@@ -65,20 +82,13 @@ class PostcardCreateFragment : Fragment(), SimpleDialog.OnDialogResultListener {
 	override fun onActivityCreated(savedInstanceState: Bundle?) {
 		super.onActivityCreated(savedInstanceState)
 		val imageUrl = arguments.getString(KEY_IMAGE)
-		val target: Target = object : com.squareup.picasso.Target {
-			override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
-			}
 
-			override fun onBitmapFailed(errorDrawable: Drawable?) {
-			}
-
-			override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
-				paintImageView.loadBitmap(bitmap!!, paintObservable)
-			}
-		}
-		Picasso.with(context)
+		Picasso.Builder(context)
+				.downloader(OkHttpDownloader(context))
+				.build()
 				.load(imageUrl)
 				.into(target)
+
 		setupToolButtons()
 		textSizePicker.minValue = 8
 		textSizePicker.maxValue = 50

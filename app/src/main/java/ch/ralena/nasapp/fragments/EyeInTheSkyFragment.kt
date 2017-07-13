@@ -13,6 +13,7 @@ import android.support.v7.widget.ListPopupWindow
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import ch.ralena.nasapp.R
 import ch.ralena.nasapp.adapters.SearchLocationArrayAdapter
 import ch.ralena.nasapp.inflate
@@ -31,12 +32,15 @@ val KEY_LATITUDE = "key_latitude"
 val KEY_LONGITUDE = "key_longitude"
 
 class EyeInTheSkyFragment : Fragment() {
+	val KEY_MAP_TARGET: String = "key_map_target"
+	val REQUEST_FINE_LOCATION = 666
+
 	var hasLocationPermisson = false
 	var locationClient: FusedLocationProviderClient? = null
 	var locationManager: LocationManager? = null
 	var addresses: ArrayList<Address> = ArrayList()
+	var mapCameraTarget: LatLng? = null
 
-	val REQUEST_FINE_LOCATION = 666
 	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		val view = container!!.inflate(R.layout.fragment_eyeinthesky)
 		// have to manually call all of map view's 'on' methods otherwise it won't work
@@ -46,11 +50,21 @@ class EyeInTheSkyFragment : Fragment() {
 
 	override fun onActivityCreated(savedInstanceState: Bundle?) {
 		super.onActivityCreated(savedInstanceState)
+		activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 		locationClient = LocationServices.getFusedLocationProviderClient(context)
 		locationManager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 		MapsInitializer.initialize(context)
-		getLocation()
-		setUpMyLocationButton()
+		// check if we have a saved location
+		if (mapCameraTarget != null) {
+			requestLocationPermission()
+			setUpMyLocationButton()
+			mapView.getMapAsync {
+				it.moveCamera(CameraUpdateFactory.newLatLngZoom(mapCameraTarget, 12f))
+			}
+		} else {
+			getLocation()
+			setUpMyLocationButton()
+		}
 		satelliteImage.onClick { showImage() }
 		searchButton.onClick { searchLocation() }
 	}
@@ -76,7 +90,7 @@ class EyeInTheSkyFragment : Fragment() {
 
 			val popup = ListPopupWindow(context)
 			val adapter = SearchLocationArrayAdapter(context, addresses)
-			adapter.observable.subscribe( {
+			adapter.observable.subscribe({
 				val latitude = it.latitude
 				val longitude = it.longitude
 				mapView.getMapAsync { map ->
@@ -93,12 +107,12 @@ class EyeInTheSkyFragment : Fragment() {
 
 	private fun showImage() {
 		mapView.getMapAsync { map ->
-			val location = map.cameraPosition.target
+			mapCameraTarget = map.cameraPosition.target
 
 			val fragment = EyeInTheSkyDetailFragment()
 			val arguments = Bundle()
-			arguments.putFloat(KEY_LATITUDE, location.latitude.toFloat())
-			arguments.putFloat(KEY_LONGITUDE, location.longitude.toFloat())
+			arguments.putFloat(KEY_LATITUDE, mapCameraTarget!!.latitude.toFloat())
+			arguments.putFloat(KEY_LONGITUDE, mapCameraTarget!!.longitude.toFloat())
 			fragment.arguments = arguments
 
 			// load fragment
@@ -111,22 +125,7 @@ class EyeInTheSkyFragment : Fragment() {
 
 	private fun getLocation() {
 		// make sure we have permission to check user's location
-		if (!hasLocationPermisson) {
-			// check if this is Android M+
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-				if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-					// use fragment's requestPermissions method
-					requestPermissions(
-							arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-							REQUEST_FINE_LOCATION)
-				} else {
-					hasLocationPermisson = true
-				}
-			} else {
-				// if it's < Android M, we should have location permission by default
-				hasLocationPermisson = true
-			}
-		}
+		requestLocationPermission()
 		// if we do have permission, we can use the user's location, otherwise ignore it.
 		if (hasLocationPermisson) {
 			locationManager?.requestSingleUpdate(LocationManager.GPS_PROVIDER, object : LocationListener {
@@ -149,6 +148,25 @@ class EyeInTheSkyFragment : Fragment() {
 						map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 12f))
 					}
 				}
+			}
+		}
+	}
+
+	private fun requestLocationPermission() {
+		if (!hasLocationPermisson) {
+			// check if this is Android M+
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+				if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+					// use fragment's requestPermissions method
+					requestPermissions(
+							arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+							REQUEST_FINE_LOCATION)
+				} else {
+					hasLocationPermisson = true
+				}
+			} else {
+				// if it's < Android M, we should have location permission by default
+				hasLocationPermisson = true
 			}
 		}
 	}
