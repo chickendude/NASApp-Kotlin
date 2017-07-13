@@ -5,5 +5,7 @@
 	<string name="brush_width">Brush Width</string>
 
 	<string name="google_maps_key">AIzaSyC7sUd7ZJnO2uEfZ9QwQFdI5OFMB7xen44</string>
+	<string name="left"><![CDATA[<]]></string>
+	<string name="right"><![CDATA[>]]></string>
 
 </resources>

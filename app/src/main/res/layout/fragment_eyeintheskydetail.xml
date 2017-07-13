@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+
+	<RelativeLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_above="@+id/dateLayout"
+		android:layout_alignParentTop="true">
+
+		<ImageView
+			android:id="@+id/imageView"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:scaleType="fitCenter"
+			android:layout_alignParentTop="true"
+			android:contentDescription="Nasa Image"/>
+
+		<ProgressBar
+			android:id="@+id/progressBar"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerInParent="true"
+			android:padding="150dp"/>
+	</RelativeLayout>
+
+	<TextView
+		android:id="@+id/previousDateButton"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignBottom="@+id/dateLayout"
+		android:layout_alignParentBottom="true"
+		android:layout_alignTop="@+id/dateLayout"
+		android:background="?attr/selectableItemBackgroundBorderless"
+		android:clickable="true"
+		android:gravity="center"
+		android:padding="4dp"
+		android:text="@string/left"
+		android:textSize="25sp"/>
+
+	<LinearLayout
+		android:id="@+id/dateLayout"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:layout_toLeftOf="@+id/nextDateButton"
+		android:layout_toRightOf="@id/previousDateButton"
+		android:gravity="center"
+		android:orientation="horizontal">
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_margin="8dp"
+			android:text="Date Taken:"
+			android:textSize="20sp"/>
+
+		<TextView
+			android:id="@+id/dateTakenLabel"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_margin="8dp"
+			android:layout_weight="1"
+			android:textAlignment="center"
+			android:textSize="20sp"/>
+	</LinearLayout>
+
+	<TextView
+		android:id="@+id/nextDateButton"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignBottom="@+id/dateLayout"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentRight="true"
+		android:layout_alignTop="@+id/dateLayout"
+		android:background="?attr/selectableItemBackgroundBorderless"
+		android:clickable="true"
+		android:gravity="center"
+		android:padding="4dp"
+		android:text="@string/right"
+		android:textSize="25sp"/>
+
+</RelativeLayout>

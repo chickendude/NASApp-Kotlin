@@ -53,7 +53,7 @@ class PostcardPickPhotoFragment : Fragment() {
 			override fun onResponse(call: Call<NasaResults>?, response: Response<NasaResults>?) {
 				if (response!!.isSuccessful) {
 					progressLayout.visibility = View.GONE
-					var nasaResults: NasaResults? = null
+					var nasaResults: NasaResults?
 					nasaResults = response.body()
 					if (nasaResults.photos.isNotEmpty()) {
 						photos.clear()

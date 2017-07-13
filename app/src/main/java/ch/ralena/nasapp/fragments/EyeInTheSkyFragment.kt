@@ -15,7 +15,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import ch.ralena.nasapp.R
-import ch.ralena.nasapp.api.nasaLocationApi
 import ch.ralena.nasapp.inflate
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -25,6 +24,9 @@ import com.google.android.gms.maps.MapsInitializer
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.synthetic.main.fragment_eyeinthesky.*
 import org.jetbrains.anko.sdk25.coroutines.onClick
+
+val KEY_LATITUDE = "key_latitude"
+val KEY_LONGITUDE = "key_longitude"
 
 class EyeInTheSkyFragment : Fragment() {
 	var hasLocationPermisson = false
@@ -68,7 +70,21 @@ class EyeInTheSkyFragment : Fragment() {
 	}
 
 	private fun showImage() {
-		nasaLocationApi.getLocationImage(1f, 1f)
+		mapView.getMapAsync { map ->
+			val location = map.cameraPosition.target
+
+			val fragment = EyeInTheSkyDetailFragment()
+			val arguments = Bundle()
+			arguments.putFloat(KEY_LATITUDE, location.latitude.toFloat())
+			arguments.putFloat(KEY_LONGITUDE, location.longitude.toFloat())
+			fragment.arguments = arguments
+
+			// load fragment
+			fragmentManager.beginTransaction()
+					.replace(R.id.fragmentContainer, fragment)
+					.addToBackStack(null)
+					.commit()
+		}
 	}
 
 	private fun getLocation() {
@@ -80,18 +96,9 @@ class EyeInTheSkyFragment : Fragment() {
 				}
 			}
 
-			override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-
-			}
-
-			override fun onProviderEnabled(provider: String?) {
-
-			}
-
-			override fun onProviderDisabled(provider: String?) {
-
-			}
-
+			override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
+			override fun onProviderEnabled(provider: String?) {}
+			override fun onProviderDisabled(provider: String?) {}
 		}, null)
 
 		// if no location change, just go back to last known location

@@ -14,27 +14,35 @@
 		android:layout_height="wrap_content"
 		android:layout_alignParentBottom="true"
 		android:layout_alignTop="@+id/satelliteImage"
-		android:paddingLeft="8dp"
-		android:paddingRight="16dp"
 		android:layout_marginBottom="16dp"
 		android:layout_marginLeft="16dp"
+		android:layout_marginRight="8dp"
+		android:layout_toLeftOf="@+id/satelliteImage"
 		android:background="@drawable/bg_edittext"
-		android:layout_toLeftOf="@+id/satelliteImage"/>
+		android:paddingLeft="8dp"
+		android:paddingRight="16dp"/>
 
 	<ImageView
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:src="@drawable/button_search"
-		android:layout_alignTop="@id/locationSearchEdit"
 		android:layout_alignBottom="@id/locationSearchEdit"
-		android:layout_alignRight="@id/locationSearchEdit"/>
+		android:layout_alignRight="@id/locationSearchEdit"
+		android:layout_alignTop="@id/locationSearchEdit"
+		android:src="@drawable/button_search"/>
+
 	<ImageView
 		android:id="@+id/satelliteImage"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentBottom="true"
-		android:layout_marginBottom="16dp"
 		android:layout_alignParentRight="true"
+		android:layout_marginBottom="16dp"
 		android:src="@drawable/button_satellite"
 		android:tint="@color/colorPrimary"/>
+	<ImageView
+		android:tint="@color/colorAccent"
+		android:layout_width="5dp"
+		android:layout_height="5dp"
+		android:layout_centerInParent="true"
+		android:src="@drawable/button_circle"/>
 </RelativeLayout>
