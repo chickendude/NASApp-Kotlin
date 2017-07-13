@@ -8,7 +8,6 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
@@ -45,27 +44,7 @@ class EyeInTheSkyFragment : Fragment() {
 		locationClient = LocationServices.getFusedLocationProviderClient(context)
 		locationManager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 		MapsInitializer.initialize(context)
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-			if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-				ActivityCompat.requestPermissions(activity,
-						arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-						REQUEST_FINE_LOCATION)
-			} else {
-				hasLocationPermisson = true
-			}
-		} else {
-			hasLocationPermisson = true
-		}
-		if (hasLocationPermisson) {
-			getLocation()
-		}
-		mapView.getMapAsync { map ->
-			map.isMyLocationEnabled = true
-			map.setOnMyLocationButtonClickListener {
-				getLocation()
-				true
-			}
-		}
+		getLocation()
 		satelliteImage.onClick { showImage() }
 	}
 
@@ -88,28 +67,64 @@ class EyeInTheSkyFragment : Fragment() {
 	}
 
 	private fun getLocation() {
-		locationManager?.requestSingleUpdate(LocationManager.GPS_PROVIDER, object : LocationListener {
-			override fun onLocationChanged(location: Location?) {
-				mapView.getMapAsync { map ->
-					map.isMyLocationEnabled = true
-					map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location!!.latitude, location.longitude), 12f))
+		// make sure we have permission to check user's location
+		if (!hasLocationPermisson) {
+			// check if this is Android M+
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+				if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+					// use fragment's requestPermissions method
+					requestPermissions(
+							arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+							REQUEST_FINE_LOCATION)
+				} else {
+					hasLocationPermisson = true
+				}
+			} else {
+				// if it's < Android M, we should have location permission by default
+				hasLocationPermisson = true
+			}
+		}
+		// if we do have permission, we can use the user's location, otherwise ignore it.
+		if (hasLocationPermisson) {
+			locationManager?.requestSingleUpdate(LocationManager.GPS_PROVIDER, object : LocationListener {
+				override fun onLocationChanged(location: Location?) {
+					mapView.getMapAsync { map ->
+						map.isMyLocationEnabled = true
+						map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location!!.latitude, location.longitude), 12f))
+					}
+				}
+
+				override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
+				override fun onProviderEnabled(provider: String?) {}
+				override fun onProviderDisabled(provider: String?) {}
+			}, null)
+
+			// if no location change, just go back to last known location
+			locationClient?.lastLocation?.addOnSuccessListener {
+				if (it != null) {
+					val currentLocation = LatLng(it.latitude, it.longitude)
+					mapView.getMapAsync { map ->
+						map.isMyLocationEnabled = true
+						map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 12f))
+					}
 				}
 			}
+		}
+	}
 
-			override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
-			override fun onProviderEnabled(provider: String?) {}
-			override fun onProviderDisabled(provider: String?) {}
-		}, null)
-
-		// if no location change, just go back to last known location
-		locationClient?.lastLocation?.addOnSuccessListener {
-			if (it != null) {
-				val currentLocation = LatLng(it.latitude, it.longitude)
-				mapView.getMapAsync { map ->
-					map.isMyLocationEnabled = true
-					map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 12f))
+	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+		if (requestCode == REQUEST_FINE_LOCATION && grantResults.contains(PackageManager.PERMISSION_GRANTED)) {
+			hasLocationPermisson = true
+			// enable my location button
+			mapView.getMapAsync { map ->
+				map.isMyLocationEnabled = true
+				map.setOnMyLocationButtonClickListener {
+					getLocation()
+					true
 				}
 			}
+			// load current location and go there
+			getLocation()
 		}
 	}
 
