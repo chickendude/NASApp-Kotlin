@@ -31,41 +31,6 @@ class SearchLocationArrayAdapter(ctx: Context, val addresses: ArrayList<Address>
 		return view
 	}
 
-//	override fun getFilter(): Filter {
-//		val filter = object: Filter() {
-//			override fun performFiltering(constraint: CharSequence?): FilterResults {
-//				val filterResults = FilterResults()
-//				if (constraint != null) {
-//
-//					val addresses = Geocoder(context, Locale.getDefault()).getFromLocationName(searchText, 10) as ArrayList<Address>
-//					if (addresses.size > 0) {
-//						adapter.clear()
-//						adapter.addAll(addresses)
-//						adapter.observable.subscribe({
-//							val latitude = it.latitude
-//							val longitude = it.longitude
-//							mapView.getMapAsync { map ->
-//								map.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), 12f))
-//							}
-//						})
-//						context.runOnUiThread {
-//							adapter.notifyDataSetChanged()
-//							locationSearchEdit.setAdapter(adapter)
-//							locationSearchEdit.showDropDown()
-//						}
-//					}
-//
-//				}
-//			}
-//
-//			override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-//				TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//			}
-//
-//		}
-//		return super.getFilter()
-//	}
-
 	inner class SearchViewHolder(itemView: View) {
 		val itemView: View
 		val featureName: TextView
