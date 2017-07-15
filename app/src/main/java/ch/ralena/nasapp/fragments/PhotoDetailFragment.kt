@@ -30,6 +30,8 @@ class PhotoDetailFragment : Fragment() {
 				.downloader(OkHttpDownloader(context))
 				.build()
 				.load(imageUrl)
+				.fit()
+				.centerCrop()
 				.into(imageView, object: Callback {
 					override fun onSuccess() {
 					}

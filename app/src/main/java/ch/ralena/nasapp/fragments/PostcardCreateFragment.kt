@@ -15,7 +15,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
 import android.support.v4.graphics.drawable.DrawableCompat
-import android.util.Log
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,6 +36,7 @@ import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_postcardcreate.*
 import org.jetbrains.anko.backgroundResource
 import org.jetbrains.anko.sdk25.coroutines.onClick
+import org.jetbrains.anko.support.v4.dip
 import org.jetbrains.anko.support.v4.toast
 import org.jetbrains.anko.textColor
 import java.io.File
@@ -61,7 +62,6 @@ class PostcardCreateFragment : Fragment(), SimpleDialog.OnDialogResultListener {
 			}
 
 			override fun onBitmapFailed(errorDrawable: Drawable?) {
-				Log.d("tag", "failed")
 			}
 
 			override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
@@ -83,10 +83,15 @@ class PostcardCreateFragment : Fragment(), SimpleDialog.OnDialogResultListener {
 		super.onActivityCreated(savedInstanceState)
 		val imageUrl = arguments.getString(KEY_IMAGE)
 
+		// load image into paintview
+		val metrics = DisplayMetrics()	// needed for screen width
+		activity.windowManager.defaultDisplay.getMetrics(metrics)
 		Picasso.Builder(context)
 				.downloader(OkHttpDownloader(context))
 				.build()
 				.load(imageUrl)
+				.resize(metrics.widthPixels, dip(350))
+				.centerCrop()
 				.into(target)
 
 		setupToolButtons()
@@ -214,8 +219,6 @@ class PostcardCreateFragment : Fragment(), SimpleDialog.OnDialogResultListener {
 		} else {
 			imageUri = Uri.fromFile(f)
 		}
-
-		Log.d("TAG", imageUri.toString())
 
 		// send share intent
 		try {

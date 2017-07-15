@@ -12,8 +12,8 @@
 		<ch.ralena.nasapp.views.PaintView
 			android:id="@+id/paintImageView"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:scaleType="center"/>
+			android:layout_height="350dp"
+			android:scaleType="fitStart"/>
 
 		<View
 			android:layout_width="0dp"
