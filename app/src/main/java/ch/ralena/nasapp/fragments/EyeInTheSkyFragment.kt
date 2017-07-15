@@ -10,6 +10,8 @@ import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v7.widget.ListPopupWindow
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,10 +41,18 @@ class EyeInTheSkyFragment : Fragment() {
 	var locationClient: FusedLocationProviderClient? = null
 	var locationManager: LocationManager? = null
 	var addresses: ArrayList<Address> = ArrayList()
+	lateinit var searchAdapter: SearchLocationArrayAdapter
 	var mapCameraTarget: LatLng? = null
+	lateinit var popup: ListPopupWindow
+	var searchThread: Thread = Thread()
 
 	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		val view = container!!.inflate(R.layout.fragment_eyeinthesky)
+		searchAdapter = SearchLocationArrayAdapter(context, addresses)
+		// set up location search results popup window
+		popup = ListPopupWindow(context)
+		popup.setDropDownGravity(GravityCompat.START)
+		popup.anchorView = view.findViewById(R.id.locationSearchEdit)
 		// have to manually call all of map view's 'on' methods otherwise it won't work
 		view.findViewById<MapView>(R.id.mapView).onCreate(savedInstanceState)
 		return view
@@ -50,10 +60,27 @@ class EyeInTheSkyFragment : Fragment() {
 
 	override fun onActivityCreated(savedInstanceState: Bundle?) {
 		super.onActivityCreated(savedInstanceState)
+
+		// set up autocompletetextview
+		locationSearchEdit.addTextChangedListener(
+				object : TextWatcher {
+					override fun afterTextChanged(p0: Editable?) {}
+
+					override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+					override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+						updateAddressList()
+					}
+				})
+
+		// make sure edittext isn't covered by keyboard
 		activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+
+		// set up location services and map
 		locationClient = LocationServices.getFusedLocationProviderClient(context)
 		locationManager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 		MapsInitializer.initialize(context)
+
 		// check if we have a saved location
 		if (mapCameraTarget != null) {
 			requestLocationPermission()
@@ -66,7 +93,7 @@ class EyeInTheSkyFragment : Fragment() {
 			setUpMyLocationButton()
 		}
 		satelliteImage.onClick { showImage() }
-		searchButton.onClick { searchLocation() }
+		searchButton.onClick { updateAddressList() }
 	}
 
 	private fun setUpMyLocationButton() {
@@ -81,27 +108,54 @@ class EyeInTheSkyFragment : Fragment() {
 		}
 	}
 
-	private fun searchLocation() {
-		val searchText = locationSearchEdit.text.toString()
-		val geocoder = Geocoder(context, Locale.getDefault())
-		addresses = geocoder.getFromLocationName(searchText, 10) as ArrayList<Address>
-		if (addresses.size > 0) {
+	private fun updateAddressList() {
+		if (!searchThread.isAlive) {
+			searchThread = Thread(Runnable {
+				// load search text
+				val searchText = locationSearchEdit.text.toString()
 
+				// create geocoder to transform search text into list of locations
+				val geocoder = Geocoder(context, Locale.getDefault())
 
-			val popup = ListPopupWindow(context)
-			val adapter = SearchLocationArrayAdapter(context, addresses)
-			adapter.observable.subscribe({
-				val latitude = it.latitude
-				val longitude = it.longitude
-				mapView.getMapAsync { map ->
-					map.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), 12f))
+				// clear previous list and update with new list from geocoder
+				addresses.clear()
+				addresses.addAll(geocoder.getFromLocationName(searchText, 10) as ArrayList<Address>)
+
+				// if we have one or more addresses, show the popup, otherwise close it
+				if (addresses.size > 0) {
+					// check if an item was clicked
+					searchAdapter.observable.subscribe({
+						val latitude = it.latitude
+						val longitude = it.longitude
+						mapView.getMapAsync { map ->
+							map.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), 12f))
+						}
+						popup.dismiss()
+					})
+
+					// update popup or create it if it is currently closed
+					activity.runOnUiThread {
+						searchAdapter.notifyDataSetChanged()
+						if (popup.isShowing) {
+							searchAdapter.notifyDataSetChanged()
+						} else {
+							popup = ListPopupWindow(context)
+							popup.setAdapter(searchAdapter)
+							popup.anchorView = locationSearchEdit
+							popup.show()
+						}
+					}
+				} else {
+					// if there aren't any results, close the popup
+					if (popup.isShowing) {
+						activity.runOnUiThread {
+							popup.dismiss()
+							searchAdapter.notifyDataSetChanged()
+						}
+					}
 				}
-				popup.dismiss()
 			})
-			popup.anchorView = locationSearchEdit
-			popup.setAdapter(adapter)
-			popup.setDropDownGravity(GravityCompat.START)
-			popup.show()
+			searchThread.start()
 		}
 	}
 
