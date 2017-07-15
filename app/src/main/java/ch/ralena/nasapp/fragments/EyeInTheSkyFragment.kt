@@ -28,7 +28,6 @@ import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.synthetic.main.fragment_eyeinthesky.*
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import java.util.*
-import kotlin.collections.ArrayList
 
 val KEY_LATITUDE = "key_latitude"
 val KEY_LONGITUDE = "key_longitude"
@@ -43,8 +42,9 @@ class EyeInTheSkyFragment : Fragment() {
 	var addresses: ArrayList<Address> = ArrayList()
 	lateinit var searchAdapter: SearchLocationArrayAdapter
 	var mapCameraTarget: LatLng? = null
-	lateinit var popup: ListPopupWindow
 	var searchThread: Thread = Thread()
+	lateinit var popup: ListPopupWindow
+	lateinit var geocoder: Geocoder
 
 	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		val view = container!!.inflate(R.layout.fragment_eyeinthesky)
@@ -53,6 +53,10 @@ class EyeInTheSkyFragment : Fragment() {
 		popup = ListPopupWindow(context)
 		popup.setDropDownGravity(GravityCompat.START)
 		popup.anchorView = view.findViewById(R.id.locationSearchEdit)
+
+		// create geocoder to transform search text into list of locations
+		geocoder = Geocoder(context, Locale.getDefault())
+
 		// have to manually call all of map view's 'on' methods otherwise it won't work
 		view.findViewById<MapView>(R.id.mapView).onCreate(savedInstanceState)
 		return view
@@ -93,8 +97,24 @@ class EyeInTheSkyFragment : Fragment() {
 			setUpMyLocationButton()
 		}
 		satelliteImage.onClick { showImage() }
-		searchButton.onClick { updateAddressList() }
+		searchButton.onClick { goToAddress() }
 	}
+
+	private fun goToAddress() {
+		addresses.clear()
+		addresses.addAll(geocoder.getFromLocationName(locationSearchEdit.text.toString(), 10) as ArrayList<Address>)
+
+		// if we have at least one address, take first address and jump to that location on map
+		if (addresses.size > 0) {
+			val latitude = addresses[0].latitude
+			val longitude = addresses[0].longitude
+			mapView.getMapAsync { map ->
+				map.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), 12f))
+			}
+
+		}
+	}
+
 
 	private fun setUpMyLocationButton() {
 		if (hasLocationPermisson) {
@@ -113,9 +133,6 @@ class EyeInTheSkyFragment : Fragment() {
 			searchThread = Thread(Runnable {
 				// load search text
 				val searchText = locationSearchEdit.text.toString()
-
-				// create geocoder to transform search text into list of locations
-				val geocoder = Geocoder(context, Locale.getDefault())
 
 				// clear previous list and update with new list from geocoder
 				addresses.clear()
