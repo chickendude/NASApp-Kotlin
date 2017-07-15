@@ -24,7 +24,11 @@ val KEY_IMAGE = "key_image"
 val BACKSTACK_PHOTOPICK = "backstack_photopick"
 
 class PostcardPickPhotoFragment : Fragment() {
-	lateinit var photos: ArrayList<Photo>
+	var photos: ArrayList<Photo>
+
+	init {
+		photos = arrayListOf()
+	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -32,7 +36,8 @@ class PostcardPickPhotoFragment : Fragment() {
 	}
 
 	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-		photos = arrayListOf()
+		if (photos.isEmpty())
+			photos = arrayListOf()
 		return container!!.inflate(R.layout.fragment_postcardpickphoto)
 	}
 
@@ -50,36 +55,39 @@ class PostcardPickPhotoFragment : Fragment() {
 		recyclerView.layoutManager = GridLayoutManager(context, 4)
 		adapter.observable.subscribe { photo -> loadPhoto(photo) }
 
-		val apiCall: Call<NasaResults>
-		if (isSol)
-			apiCall = nasaApi.getPhotosBySol(rover, sol, camera)
-		else
-			apiCall = nasaApi.getPhotosByEarthDate(rover, earthDate, camera)
-		// add callback to api call
-		apiCall.enqueue(object : Callback<NasaResults> {
-			override fun onResponse(call: Call<NasaResults>?, response: Response<NasaResults>?) {
-				if (response!!.isSuccessful) {
-					progressLayout.visibility = View.GONE
-					var nasaResults: NasaResults?
-					nasaResults = response.body()
-					if (nasaResults.photos.isNotEmpty()) {
-						photos.clear()
-						photos.addAll(nasaResults.photos)
-						adapter.notifyDataSetChanged()
+		if (photos.isEmpty()) {
+			val apiCall: Call<NasaResults>
+			if (isSol)
+				apiCall = nasaApi.getPhotosBySol(rover, sol, camera)
+			else
+				apiCall = nasaApi.getPhotosByEarthDate(rover, earthDate, camera)
+			// add callback to api call
+			apiCall.enqueue(object : Callback<NasaResults> {
+				override fun onResponse(call: Call<NasaResults>?, response: Response<NasaResults>?) {
+					if (response!!.isSuccessful) {
+						progressLayout.visibility = View.GONE
+						var nasaResults: NasaResults?
+						nasaResults = response.body()
+						if (nasaResults.photos.isNotEmpty()) {
+							photos.clear()
+							photos.addAll(nasaResults.photos)
+							adapter.notifyDataSetChanged()
+						} else {
+							toast("Your button_search didn't produce any results")
+							fragmentManager.popBackStack()
+						}
 					} else {
-						toast("Your button_search didn't produce any results")
-						fragmentManager.popBackStack()
+						toast("There was an error retrieving the search results.")
 					}
-				} else {
+				}
+
+				override fun onFailure(p0: Call<NasaResults>?, p1: Throwable?) {
 					toast("There was an error retrieving the search results.")
 				}
-			}
-
-			override fun onFailure(p0: Call<NasaResults>?, p1: Throwable?) {
-				toast("There was an error retrieving the search results.")
-			}
-		})
-
+			})
+		} else {
+			progressLayout.visibility = View.GONE
+		}
 	}
 
 	private fun loadPhoto(photoClick: PostcardPickPhotoAdapter.PhotoClick) {
