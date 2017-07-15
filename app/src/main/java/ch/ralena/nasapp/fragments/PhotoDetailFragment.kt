@@ -3,13 +3,11 @@ package ch.ralena.nasapp.fragments
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.*
+import android.widget.ImageView
 import ch.ralena.nasapp.R
 import ch.ralena.nasapp.inflate
-import com.squareup.picasso.Callback
-import com.squareup.picasso.OkHttpDownloader
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_photodetail.*
-import org.jetbrains.anko.support.v4.toast
 
 class PhotoDetailFragment : Fragment() {
 
@@ -17,29 +15,23 @@ class PhotoDetailFragment : Fragment() {
 
 	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		setHasOptionsMenu(true)
-		return container!!.inflate(R.layout.fragment_photodetail)
+		val view: View = container!!.inflate(R.layout.fragment_photodetail)
+		imageUrl = arguments.getString(KEY_IMAGE)
+
+		Picasso.with(context)
+				.load(imageUrl)
+				.fit()
+				.centerCrop()
+				.into(view.findViewById<ImageView>(R.id.imageView))
+
+		return view
 	}
 
 	override fun onActivityCreated(savedInstanceState: Bundle?) {
 		super.onActivityCreated(savedInstanceState)
-		imageUrl = arguments.getString(KEY_IMAGE)
 		val roverNameText = arguments.getString(KEY_ROVER)
 		val cameraNameText = arguments.getString(KEY_CAMERA)
 		val earthDateText = arguments.getString(KEY_EARTHDATE)
-		Picasso.Builder(context)
-				.downloader(OkHttpDownloader(context))
-				.build()
-				.load(imageUrl)
-				.fit()
-				.centerCrop()
-				.into(imageView, object: Callback {
-					override fun onSuccess() {
-					}
-
-					override fun onError() {
-						toast("Error loading photo.")
-					}
-				})
 		roverName.text = roverNameText
 		cameraName.text = cameraNameText
 		earthDate.text = earthDateText

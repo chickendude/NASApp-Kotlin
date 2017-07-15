@@ -17,7 +17,9 @@ import org.jetbrains.anko.toast
 
 class PostcardPickPhotoAdapter(val photos: ArrayList<Photo>) : RecyclerView.Adapter<PostcardPickPhotoAdapter.ViewHolder>() {
 
-	val subject: PublishSubject<Photo> = PublishSubject.create()
+	data class PhotoClick(val photo: Photo, val view: ImageView)
+
+	val observable: PublishSubject<PhotoClick> = PublishSubject.create()
 
 	override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
 		val view = parent!!.inflate(R.layout.item_postcardpickphoto)
@@ -43,12 +45,16 @@ class PostcardPickPhotoAdapter(val photos: ArrayList<Photo>) : RecyclerView.Adap
 		}
 
 		fun bindView(photo: Photo) {
-			imageView.onClick { subject.onNext(photo) }
+			itemView.transitionName = ""
+			imageView.onClick {
+				imageView.transitionName = "transitionImage"
+				observable.onNext(PhotoClick(photo, imageView))
+			}
 			Picasso.with(imageView.context)
 					.load(photo.img_src)
 					.fit()
 					.centerCrop()
-					.into(imageView, object: Callback {
+					.into(imageView, object : Callback {
 						override fun onSuccess() {
 							progressBar.visibility = View.GONE
 						}

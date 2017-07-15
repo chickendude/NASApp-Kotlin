@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
 import android.transition.Explode
+import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,7 +48,7 @@ class PostcardPickPhotoFragment : Fragment() {
 		val adapter = PostcardPickPhotoAdapter(photos)
 		recyclerView.adapter = adapter
 		recyclerView.layoutManager = GridLayoutManager(context, 4)
-		adapter.subject.subscribe { photo -> loadPhoto(photo) }
+		adapter.observable.subscribe { photo -> loadPhoto(photo) }
 
 		val apiCall: Call<NasaResults>
 		if (isSol)
@@ -70,26 +71,29 @@ class PostcardPickPhotoFragment : Fragment() {
 						fragmentManager.popBackStack()
 					}
 				} else {
-					toast("There was an error retrieving the button_search results.")
+					toast("There was an error retrieving the search results.")
 				}
 			}
 
 			override fun onFailure(p0: Call<NasaResults>?, p1: Throwable?) {
-				toast("There was an error retrieving the button_search results.")
+				toast("There was an error retrieving the search results.")
 			}
 		})
 
 	}
 
-	private fun loadPhoto(photo: Photo) {
+	private fun loadPhoto(photoClick: PostcardPickPhotoAdapter.PhotoClick) {
 		val fragment = PhotoDetailFragment()
 		val bundle = Bundle()
-		bundle.putString(KEY_IMAGE, photo.img_src)
-		bundle.putString(KEY_ROVER, photo.rover.name)
-		bundle.putString(KEY_EARTHDATE, photo.earth_date)
-		bundle.putString(KEY_CAMERA, photo.camera.full_name)
+		bundle.putString(KEY_IMAGE, photoClick.photo.img_src)
+		bundle.putString(KEY_ROVER, photoClick.photo.rover.name)
+		bundle.putString(KEY_EARTHDATE, photoClick.photo.earth_date)
+		bundle.putString(KEY_CAMERA, photoClick.photo.camera.full_name)
 		fragment.arguments = bundle
+
+		fragment.sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.move)
 		fragmentManager.beginTransaction()
+				.addSharedElement(photoClick.view, "transitionImage")
 				.replace(R.id.fragmentContainer, fragment, BACKSTACK_PHOTOPICK)
 				.addToBackStack(BACKSTACK_PHOTOPICK)
 				.commit()
