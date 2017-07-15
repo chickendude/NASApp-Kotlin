@@ -2,10 +2,8 @@ package ch.ralena.nasapp.fragments
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.transition.Slide
+import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import ch.ralena.nasapp.R
@@ -216,6 +214,12 @@ class PostcardFragment : Fragment() {
 		arguments.putString(KEY_EARTHDATE, date)
 		arguments.putBoolean(KEY_ISSOL, isSol)
 		fragment.arguments = arguments
+		// set up transitions
+		val slide = Slide()
+		slide.slideEdge = Gravity.LEFT
+
+		fragment.enterTransition = slide
+		exitTransition = slide
 
 		fragmentManager.beginTransaction()
 				.replace(R.id.fragmentContainer, fragment)

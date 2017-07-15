@@ -3,6 +3,7 @@ package ch.ralena.nasapp.fragments
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
+import android.transition.Explode
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +24,11 @@ val BACKSTACK_PHOTOPICK = "backstack_photopick"
 
 class PostcardPickPhotoFragment : Fragment() {
 	lateinit var photos: ArrayList<Photo>
+
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		exitTransition = Explode()
+	}
 
 	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		photos = arrayListOf()
