@@ -22,7 +22,7 @@
 			android:layout_height="wrap_content"
 			android:textColor="@android:color/white"
 			android:textAlignment="center"
-			android:textSize="20sp"
+			android:textSize="18sp"
 			tool:text="rhaz"/>
 
 		<View
