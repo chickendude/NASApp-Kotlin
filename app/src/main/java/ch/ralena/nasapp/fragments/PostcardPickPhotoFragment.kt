@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
 import android.transition.Explode
+import android.transition.Fade
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
@@ -33,6 +34,7 @@ class PostcardPickPhotoFragment : Fragment() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		exitTransition = Explode()
+		returnTransition = Fade()
 	}
 
 	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -100,6 +102,7 @@ class PostcardPickPhotoFragment : Fragment() {
 		fragment.arguments = bundle
 
 		fragment.sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.move)
+
 		fragmentManager.beginTransaction()
 				.addSharedElement(photoClick.view, "transitionImage")
 				.replace(R.id.fragmentContainer, fragment, BACKSTACK_PHOTOPICK)
