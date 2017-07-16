@@ -1,6 +1,7 @@
 package ch.ralena.nasapp.adapters
 
 import android.graphics.drawable.Drawable
+import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +17,7 @@ class CameraAdapter(var cameras: ArrayList<String>) :
 		RecyclerView.Adapter<CameraAdapter.CameraViewHolder>() {
 
 	var currentlySelected: Int = 0
-	var defaultBackground: Drawable? = null
+	var defaultForeground: Drawable? = null
 	val observable: PublishSubject<String> = PublishSubject.create()
 
 	override fun onBindViewHolder(holder: CameraViewHolder?, position: Int) {
@@ -25,7 +26,7 @@ class CameraAdapter(var cameras: ArrayList<String>) :
 
 	override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): CameraViewHolder {
 		val view = parent!!.inflate(R.layout.item_camera)
-		defaultBackground = view.backgroundDrawable
+		defaultForeground = view.backgroundDrawable
 		return CameraViewHolder(view)
 	}
 
@@ -38,16 +39,16 @@ class CameraAdapter(var cameras: ArrayList<String>) :
 		val fullName: TextView
 
 		init {
-			defaultBackground = itemView.backgroundDrawable
+			defaultForeground = (itemView as CardView).foreground
 			abbreviation = itemView.findViewById(R.id.abbreviation)
 			fullName = itemView.findViewById(R.id.fullName)
 		}
 
 		fun bindView(position: Int) {
 			if (position == currentlySelected)
-				itemView.backgroundDrawable = itemView.context.getDrawable(R.drawable.bg_edittext)
+				(itemView as CardView).foreground = itemView.context.getDrawable(R.drawable.fg_camera)
 			else
-				itemView.backgroundDrawable = defaultBackground
+				(itemView as CardView).foreground = defaultForeground
 			itemView.onClick {
 				observable.onNext(cameras[position])
 				currentlySelected = position
