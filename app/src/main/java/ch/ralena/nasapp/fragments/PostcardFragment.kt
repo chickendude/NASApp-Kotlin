@@ -6,8 +6,6 @@ import android.support.v7.widget.CardView
 import android.support.v7.widget.GridLayoutManager
 import android.transition.Slide
 import android.view.*
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import ch.ralena.nasapp.R
 import ch.ralena.nasapp.adapters.CameraAdapter
 import ch.ralena.nasapp.api.nasaApi
@@ -16,6 +14,7 @@ import ch.ralena.nasapp.models.NasaManifestResults
 import ch.ralena.nasapp.models.NasaResults
 import kotlinx.android.synthetic.main.fragment_postcard.*
 import org.jetbrains.anko.backgroundDrawable
+import org.jetbrains.anko.sdk25.coroutines.onCheckedChange
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.support.v4.toast
 import retrofit2.Call
@@ -115,31 +114,18 @@ class PostcardFragment : Fragment() {
 		} else
 			rovers[0].callOnClick()
 
-		// sol/date spinner
-		solDateSpinner.adapter = object : ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, arrayOf("Martian Sol", "Earth Date")) {
-			override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-				// remove extra padding from view
-				val view = super.getView(position, convertView, parent)
-				view!!.setPadding(0, view.paddingTop, 0, view.paddingBottom)
-				return view
-			}
-		}
-		solDateSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-			override fun onNothingSelected(view: AdapterView<*>?) {
-
+		// date selection
+		dateRadioGroup.onCheckedChange { group, checkedId ->
+			if (checkedId == R.id.earthDateButton) {
+				// show earth/hide sol
+				solDateText.visibility = View.INVISIBLE
+				earthDateText.visibility = View.VISIBLE
+			} else {
+				// show sol and hide earth
+				solDateText.visibility = View.VISIBLE
+				earthDateText.visibility = View.INVISIBLE
 			}
 
-			override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-				if (position == 0) {
-					// show sol and hide earth
-					solDateText.visibility = View.VISIBLE
-					earthDateText.visibility = View.INVISIBLE
-				} else {
-					// show earth/hide sol
-					solDateText.visibility = View.INVISIBLE
-					earthDateText.visibility = View.VISIBLE
-				}
-			}
 		}
 
 		// open date picker when clicking on earth date textview
@@ -229,8 +215,7 @@ class PostcardFragment : Fragment() {
 
 	private fun newSearch() {
 		// pull data from spinners and edit texts
-		val camera = ""//cameraRecyclerView.selectedItem.toString()
-		val isSol = solDateSpinner.selectedItem.toString().toLowerCase().contains("sol")
+		val isSol = martianSolButton.isChecked
 		val sol = if (solDateText.text.toString() == "") 1 else Integer.parseInt(solDateText.text.toString())
 		val date = if (earthDateText.text.toString() == "") "2000-1-1" else earthDateText.text.toString()
 
