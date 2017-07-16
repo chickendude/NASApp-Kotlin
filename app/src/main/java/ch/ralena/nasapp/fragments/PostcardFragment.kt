@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment
 import android.support.v7.widget.CardView
 import android.support.v7.widget.GridLayoutManager
 import android.transition.Slide
-import android.util.Log
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -50,9 +49,10 @@ class PostcardFragment : Fragment() {
 	var earthDate: Calendar = Calendar.getInstance()
 	val rovers: ArrayList<CardView> = ArrayList()
 	var selectedRover: String? = null
+	var selectedCamera: String? = null
+
 
 	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-		Log.d("TAG", "onCreateView")
 		return container?.inflate(R.layout.fragment_postcard)
 	}
 
@@ -69,14 +69,13 @@ class PostcardFragment : Fragment() {
 	override fun onActivityCreated(savedInstanceState: Bundle?) {
 		super.onActivityCreated(savedInstanceState)
 
-		Log.d("TAG", "onactivitycreated")
-
 		// set up cameras and camera spinner
+		selectedCamera = "all"
 		val cameras: ArrayList<String> = ArrayList(camerasOpportunity)
 		val cameraAdapter = CameraAdapter(cameras)
+		cameraAdapter.observable.subscribe { selectedCamera = it }
 		cameraRecyclerView.adapter = cameraAdapter
 		cameraRecyclerView.layoutManager = GridLayoutManager(context, 3)
-
 
 		// load rovers into arraylist and set up on click events
 		rovers.clear()
@@ -238,7 +237,7 @@ class PostcardFragment : Fragment() {
 		val fragment = PostcardPickPhotoFragment()
 		val arguments = Bundle()
 		arguments.putString(KEY_ROVER, selectedRover)
-		arguments.putString(KEY_CAMERA, if (camera.toLowerCase() == "all") null else camera)
+		arguments.putString(KEY_CAMERA, if (selectedCamera!!.toLowerCase() == "all") null else selectedCamera)
 		arguments.putInt(KEY_SOL, sol)
 		arguments.putString(KEY_EARTHDATE, date)
 		arguments.putBoolean(KEY_ISSOL, isSol)

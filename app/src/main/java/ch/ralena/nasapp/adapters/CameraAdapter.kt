@@ -8,6 +8,7 @@ import android.widget.TextView
 import ch.ralena.nasapp.R
 import ch.ralena.nasapp.fragments.cameraNames
 import ch.ralena.nasapp.inflate
+import io.reactivex.subjects.PublishSubject
 import org.jetbrains.anko.backgroundDrawable
 import org.jetbrains.anko.sdk25.coroutines.onClick
 
@@ -16,6 +17,7 @@ class CameraAdapter(var cameras: ArrayList<String>) :
 
 	var currentlySelected: Int = 0
 	var defaultBackground: Drawable? = null
+	val observable: PublishSubject<String> = PublishSubject.create()
 
 	override fun onBindViewHolder(holder: CameraViewHolder?, position: Int) {
 		holder?.bindView(position)
@@ -47,6 +49,7 @@ class CameraAdapter(var cameras: ArrayList<String>) :
 			else
 				itemView.backgroundDrawable = defaultBackground
 			itemView.onClick {
+				observable.onNext(cameras[position])
 				currentlySelected = position
 				notifyDataSetChanged()
 			}
