@@ -2,18 +2,20 @@ package ch.ralena.nasapp.fragments
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.CardView
 import android.transition.Slide
+import android.util.Log
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import ch.ralena.nasapp.R
 import ch.ralena.nasapp.adapters.CameraSpinnerAdapter
-import ch.ralena.nasapp.adapters.RoverSpinnerAdapter
 import ch.ralena.nasapp.api.nasaApi
 import ch.ralena.nasapp.inflate
 import ch.ralena.nasapp.models.NasaManifestResults
 import ch.ralena.nasapp.models.NasaResults
 import kotlinx.android.synthetic.main.fragment_postcard.*
+import org.jetbrains.anko.backgroundDrawable
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.support.v4.toast
 import retrofit2.Call
@@ -45,8 +47,11 @@ val KEY_ISSOL = "key_issol"
 
 class PostcardFragment : Fragment() {
 	var earthDate: Calendar = Calendar.getInstance()
+	val rovers: ArrayList<CardView> = ArrayList()
+	var selectedRover: String? = null
 
 	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+		Log.d("TAG", "onCreateView")
 		return container?.inflate(R.layout.fragment_postcard)
 	}
 
@@ -62,29 +67,52 @@ class PostcardFragment : Fragment() {
 
 	override fun onActivityCreated(savedInstanceState: Bundle?) {
 		super.onActivityCreated(savedInstanceState)
-		val cameras: ArrayList<String> = ArrayList(camerasOpportunity)
 
-		// camera spinner
+		Log.d("TAG", "onactivitycreated")
+
+		// set up cameras and camera spinner
+		val cameras: ArrayList<String> = ArrayList(camerasOpportunity)
 		val cameraAdapter = CameraSpinnerAdapter(context, R.layout.item_camera, cameras)
 		cameraSpinner.adapter = cameraAdapter
 
-		// set up rover spinner
-		val roverAdapter = RoverSpinnerAdapter(context, R.layout.item_rover, roverNames)
-		roverSpinner.adapter = roverAdapter
-		roverSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-			override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+
+		// load rovers into arraylist and set up on click events
+		rovers.clear()
+		rovers.addAll(arrayListOf(opportunityLayout, spiritLayout, curiosityLayout))
+		rovers.forEach {
+			val bg = it.backgroundDrawable
+			it.onClick {
+				rovers.forEach { it.backgroundDrawable = bg }
+				it!!.backgroundDrawable = activity.getDrawable(R.drawable.bg_edittext)
+
 				cameras.clear()
-				when (roverNames[position]) {
-					"Curiosity" -> cameras.addAll(camerasCuriosity)
-					"Opportunity" -> cameras.addAll(camerasOpportunity)
-					"Spirit" -> cameras.addAll(camerasSpirit)
-					else -> cameras.addAll(camerasCuriosity)
+				when (it) {
+					curiosityLayout -> {
+						selectedRover = "curiosity"
+						cameras.addAll(camerasCuriosity)
+					}
+					opportunityLayout -> {
+						selectedRover = "opportunity"
+						cameras.addAll(camerasOpportunity)
+					}
+					spiritLayout -> {
+						selectedRover = "spirit"
+						cameras.addAll(camerasSpirit)
+					}
 				}
 				cameraAdapter.notifyDataSetChanged()
 			}
-
-			override fun onNothingSelected(parent: AdapterView<*>) {}
 		}
+
+		// when returning, make sure correct rover is selected
+		if (selectedRover != null) {
+			when (selectedRover) {
+				"opportunity" -> rovers[0].callOnClick()
+				"spirit" -> rovers[1].callOnClick()
+				"curiosity" -> rovers[2].callOnClick()
+			}
+		} else
+			rovers[0].callOnClick()
 
 		// sol/date spinner
 		solDateSpinner.adapter = object : ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, arrayOf("Martian Sol", "Earth Date")) {
@@ -200,7 +228,6 @@ class PostcardFragment : Fragment() {
 
 	private fun newSearch() {
 		// pull data from spinners and edit texts
-		val rover = roverSpinner.selectedItem.toString().toLowerCase()
 		val camera = cameraSpinner.selectedItem.toString()
 		val isSol = solDateSpinner.selectedItem.toString().toLowerCase().contains("sol")
 		val sol = if (solDateText.text.toString() == "") 1 else Integer.parseInt(solDateText.text.toString())
@@ -208,7 +235,7 @@ class PostcardFragment : Fragment() {
 
 		val fragment = PostcardPickPhotoFragment()
 		val arguments = Bundle()
-		arguments.putString(KEY_ROVER, rover)
+		arguments.putString(KEY_ROVER, selectedRover)
 		arguments.putString(KEY_CAMERA, if (camera.toLowerCase() == "all") null else camera)
 		arguments.putInt(KEY_SOL, sol)
 		arguments.putString(KEY_EARTHDATE, date)

@@ -9,62 +9,157 @@
 											 android:focusableInTouchMode="true"
 											 android:orientation="vertical">
 
+
 	<TextView
 		android:id="@+id/roverText"
-		android:layout_width="120dp"
+		android:layout_width="0dp"
 		android:layout_height="wrap_content"
 		android:layout_above="@+id/cameraSpinner"
 		android:layout_alignParentStart="true"
-		android:layout_marginBottom="8dp"
-		android:layout_marginLeft="8dp"
-		android:layout_marginStart="8dp"
-		android:text="Rover:"
+		android:layout_margin="8dp"
+		android:background="@android:color/white"
+		android:elevation="2dp"
+		android:text="Select a Rover:"
+		android:textAlignment="center"
 		android:textSize="20sp"
-		app:layout_constraintBottom_toBottomOf="@+id/roverSpinner"
 		app:layout_constraintLeft_toLeftOf="parent"
-		app:layout_constraintTop_toTopOf="@+id/roverSpinner"/>
-
-	<Spinner
-		android:id="@+id/roverSpinner"
-		android:layout_width="0dp"
-		android:layout_height="wrap_content"
-		android:layout_alignParentTop="true"
-		android:layout_marginEnd="8dp"
-		android:layout_marginLeft="8dp"
-		android:layout_marginRight="8dp"
-		android:layout_marginStart="8dp"
-		android:layout_marginTop="8dp"
-		app:layout_constraintHorizontal_bias="0.0"
-		app:layout_constraintLeft_toRightOf="@+id/roverText"
 		app:layout_constraintRight_toRightOf="parent"
 		app:layout_constraintTop_toTopOf="parent"/>
 
+
+	<LinearLayout
+		android:id="@+id/roverLayouts"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_marginLeft="8dp"
+		android:layout_marginRight="8dp"
+		app:layout_constraintLeft_toLeftOf="parent"
+		app:layout_constraintRight_toRightOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/roverText">
+
+		<android.support.v7.widget.CardView
+			android:id="@+id/opportunityLayout"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_margin="16dp"
+			android:layout_weight="1"
+			android:clickable="true"
+			android:foreground="?attr/selectableItemBackground"
+			app:contentPadding="8dp"
+			app:layout_constraintLeft_toLeftOf="@+id/guidelineL"
+			app:layout_constraintRight_toLeftOf="@+id/guidelineL"
+			app:layout_constraintTop_toTopOf="parent">
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:gravity="center"
+				android:orientation="vertical">
+
+				<ImageView
+					android:layout_width="50dp"
+					android:layout_height="50dp"
+					android:scaleType="fitXY"
+					app:srcCompat="@drawable/opportunity"/>
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Opportunity"/>
+			</LinearLayout>
+		</android.support.v7.widget.CardView>
+
+		<android.support.v7.widget.CardView
+			android:id="@+id/spiritLayout"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_margin="16dp"
+			android:layout_weight="1"
+			android:clickable="true"
+			android:foreground="?attr/selectableItemBackground"
+			app:contentPadding="8dp"
+			app:layout_constraintLeft_toLeftOf="@+id/guidelineM"
+			app:layout_constraintRight_toLeftOf="@+id/guidelineM"
+			app:layout_constraintTop_toTopOf="parent">
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:gravity="center"
+				android:orientation="vertical">
+
+				<ImageView
+					android:layout_width="50dp"
+					android:layout_height="50dp"
+					android:scaleType="fitXY"
+					app:srcCompat="@drawable/spirit"/>
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Spirit"/>
+			</LinearLayout>
+		</android.support.v7.widget.CardView>
+
+		<android.support.v7.widget.CardView
+			android:id="@+id/curiosityLayout"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_margin="16dp"
+			android:layout_weight="1"
+			android:clickable="true"
+			android:foreground="?attr/selectableItemBackground"
+			app:contentPadding="8dp"
+			app:layout_constraintLeft_toLeftOf="@+id/guidelineR"
+			app:layout_constraintRight_toLeftOf="@+id/guidelineR"
+			app:layout_constraintTop_toTopOf="parent">
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:gravity="center"
+				android:orientation="vertical">
+
+				<ImageView
+					android:layout_width="50dp"
+					android:layout_height="50dp"
+					android:scaleType="fitXY"
+					app:srcCompat="@drawable/curiosity"/>
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Curiosity"/>
+			</LinearLayout>
+		</android.support.v7.widget.CardView>
+	</LinearLayout>
+
 	<TextView
 		android:id="@+id/cameraText"
-		android:layout_width="120dp"
+		android:layout_width="0dp"
 		android:layout_height="wrap_content"
-		android:layout_marginBottom="8dp"
-		android:layout_marginLeft="8dp"
-		android:layout_marginStart="8dp"
-		android:text="Camera:"
+		android:layout_margin="8dp"
+		android:background="@android:color/white"
+		android:elevation="2dp"
+		android:text="Select a camera:"
+		android:textAlignment="center"
 		android:textSize="20sp"
-		app:layout_constraintBottom_toBottomOf="@+id/cameraSpinner"
 		app:layout_constraintLeft_toLeftOf="parent"
-		app:layout_constraintTop_toTopOf="@+id/cameraSpinner"/>
+		app:layout_constraintRight_toRightOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/roverLayouts"/>
 
 	<Spinner
 		android:id="@+id/cameraSpinner"
-		android:layout_width="0dp"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_below="@id/roverSpinner"
 		android:layout_marginEnd="8dp"
 		android:layout_marginLeft="8dp"
 		android:layout_marginRight="8dp"
 		android:layout_marginStart="8dp"
 		android:layout_marginTop="8dp"
-		app:layout_constraintLeft_toRightOf="@+id/cameraText"
+		app:layout_constraintLeft_toLeftOf="parent"
 		app:layout_constraintRight_toRightOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/roverSpinner"/>
+		app:layout_constraintTop_toBottomOf="@+id/cameraText"/>
 
 	<Button
 		android:id="@+id/searchButton"
@@ -86,16 +181,31 @@
 		android:layout_height="wrap_content"
 		android:layout_marginBottom="8dp"
 		android:layout_marginEnd="8dp"
-		android:layout_marginLeft="8dp"
 		android:layout_marginRight="8dp"
-		android:layout_marginStart="8dp"
 		android:text="Random Image"
 		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintLeft_toLeftOf="@+id/guideline"
 		app:layout_constraintRight_toRightOf="parent"/>
 
 	<android.support.constraint.Guideline
-		android:id="@+id/guideline"
+		android:id="@+id/guidelineL"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		app:layout_constraintGuide_percent="0.25"
+		tools:layout_editor_absoluteX="96dp"
+		tools:layout_editor_absoluteY="0dp"/>
+
+	<android.support.constraint.Guideline
+		android:id="@+id/guidelineR"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		app:layout_constraintGuide_percent="0.75"
+		tools:layout_editor_absoluteX="288dp"
+		tools:layout_editor_absoluteY="0dp"/>
+
+	<android.support.constraint.Guideline
+		android:id="@+id/guidelineM"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:orientation="vertical"
@@ -109,6 +219,7 @@
 		android:layout_height="40dp"
 		android:layout_marginBottom="8dp"
 		android:layout_marginLeft="8dp"
+		android:layout_marginStart="8dp"
 		android:layout_marginTop="8dp"
 		android:gravity="center"
 		app:layout_constraintBottom_toBottomOf="@+id/solDateText"
@@ -119,24 +230,27 @@
 		android:id="@+id/earthDateText"
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
+		android:layout_marginEnd="8dp"
 		android:layout_marginLeft="8dp"
 		android:layout_marginRight="8dp"
+		android:layout_marginStart="8dp"
 		android:layout_marginTop="8dp"
 		android:gravity="center"
 		android:textSize="20sp"
 		android:visibility="invisible"
-		app:layout_constraintBottom_toBottomOf="@id/solDateText"
+		app:layout_constraintBottom_toBottomOf="@+id/solDateText"
 		app:layout_constraintLeft_toRightOf="@+id/solDateSpinner"
 		app:layout_constraintRight_toRightOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/cameraSpinner"
-		app:layout_constraintTop_toTopOf="@id/solDateText"/>
+		app:layout_constraintTop_toBottomOf="@+id/cameraSpinner"/>
 
 	<EditText
 		android:id="@+id/solDateText"
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
+		android:layout_marginEnd="8dp"
 		android:layout_marginLeft="8dp"
 		android:layout_marginRight="8dp"
+		android:layout_marginStart="8dp"
 		android:layout_marginTop="8dp"
 		android:ems="10"
 		android:inputType="date"
@@ -144,5 +258,6 @@
 		app:layout_constraintLeft_toRightOf="@+id/solDateSpinner"
 		app:layout_constraintRight_toRightOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/cameraSpinner"/>
+
 
 </android.support.constraint.ConstraintLayout>
