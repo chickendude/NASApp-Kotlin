@@ -3,13 +3,14 @@ package ch.ralena.nasapp.fragments
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.CardView
+import android.support.v7.widget.GridLayoutManager
 import android.transition.Slide
 import android.util.Log
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import ch.ralena.nasapp.R
-import ch.ralena.nasapp.adapters.CameraSpinnerAdapter
+import ch.ralena.nasapp.adapters.CameraAdapter
 import ch.ralena.nasapp.api.nasaApi
 import ch.ralena.nasapp.inflate
 import ch.ralena.nasapp.models.NasaManifestResults
@@ -72,8 +73,9 @@ class PostcardFragment : Fragment() {
 
 		// set up cameras and camera spinner
 		val cameras: ArrayList<String> = ArrayList(camerasOpportunity)
-		val cameraAdapter = CameraSpinnerAdapter(context, R.layout.item_camera, cameras)
-		cameraSpinner.adapter = cameraAdapter
+		val cameraAdapter = CameraAdapter(cameras)
+		cameraRecyclerView.adapter = cameraAdapter
+		cameraRecyclerView.layoutManager = GridLayoutManager(context, 3)
 
 
 		// load rovers into arraylist and set up on click events
@@ -228,7 +230,7 @@ class PostcardFragment : Fragment() {
 
 	private fun newSearch() {
 		// pull data from spinners and edit texts
-		val camera = cameraSpinner.selectedItem.toString()
+		val camera = ""//cameraRecyclerView.selectedItem.toString()
 		val isSol = solDateSpinner.selectedItem.toString().toLowerCase().contains("sol")
 		val sol = if (solDateText.text.toString() == "") 1 else Integer.parseInt(solDateText.text.toString())
 		val date = if (earthDateText.text.toString() == "") "2000-1-1" else earthDateText.text.toString()

@@ -14,10 +14,11 @@
 		android:id="@+id/roverText"
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
-		android:layout_above="@+id/cameraSpinner"
+		android:layout_above="@+id/cameraRecyclerView"
 		android:layout_alignParentStart="true"
 		android:layout_margin="8dp"
-		android:background="@android:color/white"
+		android:background="@color/colorPrimary"
+		android:textColor="@android:color/white"
 		android:elevation="2dp"
 		android:text="Select a Rover:"
 		android:textAlignment="center"
@@ -31,8 +32,10 @@
 		android:id="@+id/roverLayouts"
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
+		android:layout_marginEnd="8dp"
 		android:layout_marginLeft="8dp"
 		android:layout_marginRight="8dp"
+		android:layout_marginStart="8dp"
 		app:layout_constraintLeft_toLeftOf="parent"
 		app:layout_constraintRight_toRightOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/roverText">
@@ -139,7 +142,8 @@
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
 		android:layout_margin="8dp"
-		android:background="@android:color/white"
+		android:background="@color/colorPrimary"
+		android:textColor="@android:color/white"
 		android:elevation="2dp"
 		android:text="Select a camera:"
 		android:textAlignment="center"
@@ -148,10 +152,10 @@
 		app:layout_constraintRight_toRightOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/roverLayouts"/>
 
-	<Spinner
-		android:id="@+id/cameraSpinner"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+	<android.support.v7.widget.RecyclerView
+		android:id="@+id/cameraRecyclerView"
+		android:layout_width="0dp"
+		android:layout_height="0dp"
 		android:layout_marginEnd="8dp"
 		android:layout_marginLeft="8dp"
 		android:layout_marginRight="8dp"
@@ -159,7 +163,10 @@
 		android:layout_marginTop="8dp"
 		app:layout_constraintLeft_toLeftOf="parent"
 		app:layout_constraintRight_toRightOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/cameraText"/>
+		app:layout_constraintTop_toBottomOf="@+id/cameraText"
+		app:layout_constraintHorizontal_bias="0.0"
+		android:layout_marginBottom="8dp"
+		app:layout_constraintBottom_toTopOf="@+id/solDateSpinner"/>
 
 	<Button
 		android:id="@+id/searchButton"
@@ -215,38 +222,31 @@
 
 	<Spinner
 		android:id="@+id/solDateSpinner"
-		android:layout_width="120dp"
-		android:layout_height="40dp"
-		android:layout_marginBottom="8dp"
-		android:layout_marginLeft="8dp"
-		android:layout_marginStart="8dp"
-		android:layout_marginTop="8dp"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_margin="8dp"
 		android:gravity="center"
-		app:layout_constraintBottom_toBottomOf="@+id/solDateText"
+		app:layout_constraintBottom_toTopOf="@+id/solDateText"
 		app:layout_constraintLeft_toLeftOf="parent"
-		app:layout_constraintTop_toTopOf="@+id/solDateText"/>
+		app:layout_constraintRight_toRightOf="parent"/>
 
 	<TextView
 		android:id="@+id/earthDateText"
 		android:layout_width="0dp"
-		android:layout_height="wrap_content"
-		android:layout_marginEnd="8dp"
-		android:layout_marginLeft="8dp"
-		android:layout_marginRight="8dp"
-		android:layout_marginStart="8dp"
-		android:layout_marginTop="8dp"
+		android:layout_height="0dp"
+		android:layout_margin="8dp"
 		android:gravity="center"
 		android:textSize="20sp"
 		android:visibility="invisible"
-		app:layout_constraintBottom_toBottomOf="@+id/solDateText"
-		app:layout_constraintLeft_toRightOf="@+id/solDateSpinner"
-		app:layout_constraintRight_toRightOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/cameraSpinner"/>
+		app:layout_constraintBottom_toTopOf="@+id/searchButton"
+		app:layout_constraintLeft_toLeftOf="parent"
+		app:layout_constraintRight_toRightOf="parent"/>
 
 	<EditText
 		android:id="@+id/solDateText"
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
+		android:layout_marginBottom="8dp"
 		android:layout_marginEnd="8dp"
 		android:layout_marginLeft="8dp"
 		android:layout_marginRight="8dp"
@@ -255,9 +255,9 @@
 		android:ems="10"
 		android:inputType="date"
 		android:textAlignment="center"
-		app:layout_constraintLeft_toRightOf="@+id/solDateSpinner"
-		app:layout_constraintRight_toRightOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/cameraSpinner"/>
+		app:layout_constraintBottom_toTopOf="@+id/searchButton"
+		app:layout_constraintLeft_toLeftOf="parent"
+		app:layout_constraintRight_toRightOf="parent"/>
 
 
 </android.support.constraint.ConstraintLayout>
