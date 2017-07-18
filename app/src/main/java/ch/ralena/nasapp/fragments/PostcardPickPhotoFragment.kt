@@ -33,8 +33,6 @@ class PostcardPickPhotoFragment : Fragment() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		exitTransition = Explode()
-		returnTransition = Fade()
 	}
 
 	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -102,6 +100,8 @@ class PostcardPickPhotoFragment : Fragment() {
 		fragment.arguments = bundle
 
 		fragment.sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.move)
+		exitTransition = Explode()
+		returnTransition = Fade()
 
 		fragmentManager.beginTransaction()
 				.addSharedElement(photoClick.view, "transitionImage")

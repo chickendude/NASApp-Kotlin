@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.CardView
 import android.support.v7.widget.GridLayoutManager
+import android.transition.Fade
 import android.transition.Slide
 import android.view.*
 import ch.ralena.nasapp.R
@@ -231,7 +232,8 @@ class PostcardFragment : Fragment() {
 		val slide = Slide()
 		slide.slideEdge = Gravity.LEFT
 
-		fragment.enterTransition = slide
+		fragment.enterTransition = Fade()
+		fragment.returnTransition = Fade()
 		exitTransition = slide
 
 		fragmentManager.beginTransaction()

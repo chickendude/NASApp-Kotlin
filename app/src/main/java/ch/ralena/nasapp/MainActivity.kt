@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity(), FragmentManager.OnBackStackChangedList
 		supportFragmentManager.addOnBackStackChangedListener(this::onBackStackChanged)
 
 		bottomNavigationView.setOnNavigationItemSelectedListener {
-			supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+			supportFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
 			val fragment: Fragment?
 			if (it.itemId == R.id.marsRover) {
 				if (postcardFragment == null) {
