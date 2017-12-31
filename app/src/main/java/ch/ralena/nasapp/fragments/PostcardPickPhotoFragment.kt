@@ -35,7 +35,7 @@ class PostcardPickPhotoFragment : Fragment() {
 		super.onCreate(savedInstanceState)
 	}
 
-	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		if (photos.isEmpty())
 			photos = arrayListOf()
 		return container!!.inflate(R.layout.fragment_postcardpickphoto)
@@ -43,11 +43,11 @@ class PostcardPickPhotoFragment : Fragment() {
 
 	override fun onActivityCreated(savedInstanceState: Bundle?) {
 		super.onActivityCreated(savedInstanceState)
-		val rover = arguments.getString(KEY_ROVER)
-		val camera = arguments.getString(KEY_CAMERA)
-		val sol = arguments.getInt(KEY_SOL)
-		val earthDate = arguments.getString(KEY_EARTHDATE)
-		val isSol = arguments.getBoolean(KEY_ISSOL)
+		val rover = arguments!!.getString(KEY_ROVER)
+		val camera = arguments!!.getString(KEY_CAMERA)
+		val sol = arguments!!.getInt(KEY_SOL)
+		val earthDate = arguments!!.getString(KEY_EARTHDATE)
+		val isSol = arguments!!.getBoolean(KEY_ISSOL)
 
 		// set up recyclerview
 		val adapter = PostcardPickPhotoAdapter(photos)
@@ -68,13 +68,13 @@ class PostcardPickPhotoFragment : Fragment() {
 						progressLayout.visibility = View.GONE
 						var nasaResults: NasaResults?
 						nasaResults = response.body()
-						if (nasaResults.photos.isNotEmpty()) {
+						if (nasaResults!!.photos.isNotEmpty()) {
 							photos.clear()
 							photos.addAll(nasaResults.photos)
 							adapter.notifyDataSetChanged()
 						} else {
 							toast("Your button_search didn't produce any results")
-							fragmentManager.popBackStack()
+							fragmentManager!!.popBackStack()
 						}
 					} else {
 						toast("There was an error retrieving the search results.")
@@ -103,7 +103,7 @@ class PostcardPickPhotoFragment : Fragment() {
 		exitTransition = Explode()
 		returnTransition = Fade()
 
-		fragmentManager.beginTransaction()
+		fragmentManager!!.beginTransaction()
 				.addSharedElement(photoClick.view, "transitionImage")
 				.replace(R.id.fragmentContainer, fragment, BACKSTACK_PHOTOPICK)
 				.addToBackStack(BACKSTACK_PHOTOPICK)

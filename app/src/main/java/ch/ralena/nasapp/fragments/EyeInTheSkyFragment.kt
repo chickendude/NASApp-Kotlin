@@ -1,6 +1,7 @@
 package ch.ralena.nasapp.fragments
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.*
@@ -46,11 +47,11 @@ class EyeInTheSkyFragment : Fragment() {
 	lateinit var popup: ListPopupWindow
 	lateinit var geocoder: Geocoder
 
-	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		val view = container!!.inflate(R.layout.fragment_eyeinthesky)
-		searchAdapter = SearchLocationArrayAdapter(context, addresses)
+		searchAdapter = SearchLocationArrayAdapter(context!!, addresses)
 		// set up location search results popup window
-		popup = ListPopupWindow(context)
+		popup = ListPopupWindow(context!!)
 		popup.setDropDownGravity(GravityCompat.START)
 		popup.anchorView = view.findViewById(R.id.locationSearchEdit)
 
@@ -78,11 +79,11 @@ class EyeInTheSkyFragment : Fragment() {
 				})
 
 		// make sure edittext isn't covered by keyboard
-		activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+		activity!!.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
 		// set up location services and map
-		locationClient = LocationServices.getFusedLocationProviderClient(context)
-		locationManager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+		locationClient = LocationServices.getFusedLocationProviderClient(context!!)
+		locationManager = activity!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 		MapsInitializer.initialize(context)
 
 		// check if we have a saved location
@@ -116,6 +117,7 @@ class EyeInTheSkyFragment : Fragment() {
 	}
 
 
+	@SuppressLint("MissingPermission")
 	private fun setUpMyLocationButton() {
 		if (hasLocationPermisson) {
 			mapView.getMapAsync { map ->
@@ -151,12 +153,12 @@ class EyeInTheSkyFragment : Fragment() {
 					})
 
 					// update popup or create it if it is currently closed
-					activity.runOnUiThread {
+					activity!!.runOnUiThread {
 						searchAdapter.notifyDataSetChanged()
 						if (popup.isShowing) {
 							searchAdapter.notifyDataSetChanged()
 						} else {
-							popup = ListPopupWindow(context)
+							popup = ListPopupWindow(context!!)
 							popup.setAdapter(searchAdapter)
 							popup.anchorView = locationSearchEdit
 							popup.show()
@@ -165,7 +167,7 @@ class EyeInTheSkyFragment : Fragment() {
 				} else {
 					// if there aren't any results, close the popup
 					if (popup.isShowing) {
-						activity.runOnUiThread {
+						activity!!.runOnUiThread {
 							popup.dismiss()
 							searchAdapter.notifyDataSetChanged()
 						}
@@ -187,13 +189,14 @@ class EyeInTheSkyFragment : Fragment() {
 			fragment.arguments = arguments
 
 			// load fragment
-			fragmentManager.beginTransaction()
+			fragmentManager!!.beginTransaction()
 					.replace(R.id.fragmentContainer, fragment)
 					.addToBackStack(null)
 					.commit()
 		}
 	}
 
+	@SuppressLint("MissingPermission")
 	private fun getLocation() {
 		// make sure we have permission to check user's location
 		requestLocationPermission()
@@ -227,7 +230,7 @@ class EyeInTheSkyFragment : Fragment() {
 		if (!hasLocationPermisson) {
 			// check if this is Android M+
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-				if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+				if (ContextCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 					// use fragment's requestPermissions method
 					requestPermissions(
 							arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),

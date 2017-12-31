@@ -16,7 +16,7 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
 	val observable: PublishSubject<Calendar> = PublishSubject.create()
 
 	override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-		val calendar = arguments.getSerializable(KEY_EARTHDATE) as Calendar
+		val calendar = arguments!!.getSerializable(KEY_EARTHDATE) as Calendar
 		val year = calendar.get(Calendar.YEAR)
 		val month = calendar.get(Calendar.MONTH)
 		val day = calendar.get(Calendar.DAY_OF_MONTH)

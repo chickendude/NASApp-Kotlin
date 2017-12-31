@@ -70,22 +70,22 @@ class PostcardCreateFragment : Fragment(), SimpleDialog.OnDialogResultListener {
 		}
 	}
 
-	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return container!!.inflate(R.layout.fragment_postcardcreate)
 	}
 
 	override fun onResume() {
 		super.onResume()
-		activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+		activity!!.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 	}
 
 	override fun onActivityCreated(savedInstanceState: Bundle?) {
 		super.onActivityCreated(savedInstanceState)
-		val imageUrl = arguments.getString(KEY_IMAGE)
+		val imageUrl = arguments!!.getString(KEY_IMAGE)
 
 		// load image into paintview
 		val metrics = DisplayMetrics()	// needed for screen width
-		activity.windowManager.defaultDisplay.getMetrics(metrics)
+		activity!!.windowManager.defaultDisplay.getMetrics(metrics)
 		Picasso.Builder(context)
 				.downloader(OkHttpDownloader(context))
 				.build()
@@ -128,9 +128,9 @@ class PostcardCreateFragment : Fragment(), SimpleDialog.OnDialogResultListener {
 		paintSizes.forEach {
 			it.onClick { v ->
 				paintSizes.forEach {
-					DrawableCompat.setTint(it.drawable, ContextCompat.getColor(getContext(), R.color.colorPrimary))
+					DrawableCompat.setTint(it.drawable, ContextCompat.getColor(getContext()!!, R.color.colorPrimary))
 				}
-				DrawableCompat.setTint(it.drawable, ContextCompat.getColor(getContext(), R.color.colorAccent))
+				DrawableCompat.setTint(it.drawable, ContextCompat.getColor(getContext()!!, R.color.colorAccent))
 
 				var size = paintSizes.indexOf(it)
 				size = (size + 1) * 7
@@ -162,11 +162,11 @@ class PostcardCreateFragment : Fragment(), SimpleDialog.OnDialogResultListener {
 	}
 
 	private fun updateColors(button: ImageView) {
-		DrawableCompat.setTint(button.drawable, ContextCompat.getColor(getContext(), R.color.colorAccent))
+		DrawableCompat.setTint(button.drawable, ContextCompat.getColor(context!!, R.color.colorAccent))
 		if (button != paintButton)
-			DrawableCompat.setTint(paintButton.drawable, ContextCompat.getColor(getContext(), R.color.colorPrimary))
+			DrawableCompat.setTint(paintButton.drawable, ContextCompat.getColor(context!!, R.color.colorPrimary))
 		if (button != textButton)
-			DrawableCompat.setTint(textButton.drawable, ContextCompat.getColor(getContext(), R.color.colorPrimary))
+			DrawableCompat.setTint(textButton.drawable, ContextCompat.getColor(context!!, R.color.colorPrimary))
 	}
 
 	private fun addText(touchX: Float, touchY: Float) {
@@ -197,8 +197,8 @@ class PostcardCreateFragment : Fragment(), SimpleDialog.OnDialogResultListener {
 		// add edittext to the screen
 		imageContainer.addView(edittext)
 		edittext.requestFocus()
-		val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-		imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+		val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+		imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
 
 		edittexts.add(edittext)
 	}
@@ -213,8 +213,8 @@ class PostcardCreateFragment : Fragment(), SimpleDialog.OnDialogResultListener {
 		val imageUri: Uri
 		if (Build.VERSION.SDK_INT >= 24) {
 			imageUri = FileProvider.getUriForFile(
-					context,
-					context.getApplicationContext().getPackageName() + ".provider",
+					context!!,
+					context!!.getApplicationContext().getPackageName() + ".provider",
 					f)
 		} else {
 			imageUri = Uri.fromFile(f)
@@ -227,7 +227,7 @@ class PostcardCreateFragment : Fragment(), SimpleDialog.OnDialogResultListener {
 			intent.putExtra(Intent.EXTRA_SUBJECT, "Image from Mars Rover")
 			intent.putExtra(Intent.EXTRA_TEXT, "Check out this image from NASA's Mars Rover!")
 			intent.putExtra(Intent.EXTRA_STREAM, imageUri)
-			activity.startActivity(intent)
+			activity!!.startActivity(intent)
 		} catch (anfe: ActivityNotFoundException) {
 			toast("It appears you don't have an e-mail app set up.")
 			anfe.printStackTrace()
@@ -236,7 +236,7 @@ class PostcardCreateFragment : Fragment(), SimpleDialog.OnDialogResultListener {
 
 	private fun saveBitmap(bitmap: Bitmap): String {
 		// Get path to External Storage
-		val directory = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+		val directory = activity!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
 
 		// Generating a random number to save as image name
 		val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())

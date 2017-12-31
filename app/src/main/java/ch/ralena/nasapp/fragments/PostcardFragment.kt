@@ -52,18 +52,18 @@ class PostcardFragment : Fragment() {
 	var selectedCamera: String? = null
 
 
-	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return container?.inflate(R.layout.fragment_postcard)
 	}
 
 	override fun onPause() {
 		super.onPause()
-		activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+		activity!!.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 	}
 
 	override fun onResume() {
 		super.onResume()
-		activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+		activity!!.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 	}
 
 	override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -84,7 +84,7 @@ class PostcardFragment : Fragment() {
 			val bg = it.backgroundDrawable
 			it.onClick {
 				rovers.forEach { it.backgroundDrawable = bg }
-				it!!.backgroundDrawable = activity.getDrawable(R.drawable.bg_edittext)
+				it!!.backgroundDrawable = activity!!.getDrawable(R.drawable.bg_edittext)
 
 				cameras.clear()
 				when (it) {
@@ -161,7 +161,7 @@ class PostcardFragment : Fragment() {
 						override fun onResponse(call: Call<NasaManifestResults>?, response: Response<NasaManifestResults>?) {
 							if (response!!.isSuccessful) {
 								// pull data from results
-								val manifestResults = response.body().photo_manifest
+								val manifestResults = response.body()!!.photo_manifest
 								val rover = manifestResults.name
 								val cameraObj = manifestResults.photos[rand.nextInt(manifestResults.photos.size)]
 								val camera = cameraObj.cameras[rand.nextInt(cameraObj.cameras.size)]
@@ -172,7 +172,7 @@ class PostcardFragment : Fragment() {
 											override fun onResponse(call: Call<NasaResults>?, response: Response<NasaResults>?) {
 												if (response!!.isSuccessful) {
 													var nasaResults = response.body()
-													if (nasaResults.photos.isNotEmpty()) {
+													if (nasaResults!!.photos.isNotEmpty()) {
 														val photo = nasaResults.photos[rand.nextInt(nasaResults.photos.size)]
 														// load detail fragment
 														val fragment = PhotoDetailFragment()
@@ -182,7 +182,7 @@ class PostcardFragment : Fragment() {
 														bundle.putString(KEY_EARTHDATE, photo.earth_date)
 														bundle.putString(KEY_CAMERA, photo.camera.full_name)
 														fragment.arguments = bundle
-														fragmentManager.beginTransaction()
+														fragmentManager!!.beginTransaction()
 																.replace(R.id.fragmentContainer, fragment, BACKSTACK_PHOTOPICK)
 																.addToBackStack(BACKSTACK_PHOTOPICK)
 																.commit()
@@ -236,7 +236,7 @@ class PostcardFragment : Fragment() {
 		fragment.returnTransition = Fade()
 		exitTransition = slide
 
-		fragmentManager.beginTransaction()
+		fragmentManager!!.beginTransaction()
 				.replace(R.id.fragmentContainer, fragment)
 				.addToBackStack(null)
 				.commit()

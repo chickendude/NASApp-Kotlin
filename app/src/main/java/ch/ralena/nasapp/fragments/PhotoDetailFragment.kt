@@ -13,10 +13,10 @@ class PhotoDetailFragment : Fragment() {
 
 	lateinit var imageUrl: String
 
-	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		setHasOptionsMenu(true)
 		val view: View = container!!.inflate(R.layout.fragment_photodetail)
-		imageUrl = arguments.getString(KEY_IMAGE)
+		imageUrl = arguments!!.getString(KEY_IMAGE)
 
 		Picasso.with(context)
 				.load(imageUrl)
@@ -29,9 +29,9 @@ class PhotoDetailFragment : Fragment() {
 
 	override fun onActivityCreated(savedInstanceState: Bundle?) {
 		super.onActivityCreated(savedInstanceState)
-		val roverNameText = arguments.getString(KEY_ROVER)
-		val cameraNameText = arguments.getString(KEY_CAMERA)
-		val earthDateText = arguments.getString(KEY_EARTHDATE)
+		val roverNameText = arguments!!.getString(KEY_ROVER)
+		val cameraNameText = arguments!!.getString(KEY_CAMERA)
+		val earthDateText = arguments!!.getString(KEY_EARTHDATE)
 		roverName.text = roverNameText
 		cameraName.text = cameraNameText
 		earthDate.text = earthDateText
@@ -56,7 +56,7 @@ class PhotoDetailFragment : Fragment() {
 		val bundle = Bundle()
 		bundle.putString(KEY_IMAGE, imageUrl)
 		fragment.arguments = bundle
-		fragmentManager.beginTransaction()
+		fragmentManager!!.beginTransaction()
 				.addToBackStack(null)
 				.replace(R.id.fragmentContainer, fragment)
 				.commit()

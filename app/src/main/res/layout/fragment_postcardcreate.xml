@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:orientation="vertical">
+				android:layout_height="match_parent">
 
 	<RelativeLayout
 		android:id="@+id/imageContainer"
@@ -23,184 +22,189 @@
 
 	</RelativeLayout>
 
-	<LinearLayout
-		android:id="@+id/toolScrollView"
+	<ScrollView
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_below="@id/imageContainer"
-		android:orientation="vertical">
+		android:layout_below="@id/imageContainer">
 
 		<LinearLayout
+			android:id="@+id/toolScrollView"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:gravity="center"
-			android:orientation="horizontal">
-
-			<ImageView
-				android:id="@+id/paintButton"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:background="?attr/selectableItemBackgroundBorderless"
-				android:clickable="true"
-				android:padding="4dp"
-				android:src="@drawable/button_paint"
-				android:tint="@color/colorAccent"/>
-
-			<ImageView
-				android:id="@+id/textButton"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:background="?attr/selectableItemBackgroundBorderless"
-				android:clickable="true"
-				android:padding="4dp"
-				android:src="@drawable/button_text"
-				android:tint="@color/colorPrimary"/>
-		</LinearLayout>
-
-		<RelativeLayout
-			android:id="@+id/paintToolsLayout"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="horizontal">
-
-			<ImageView
-				android:id="@+id/paintColorPicker"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_alignParentLeft="true"
-				android:layout_alignParentTop="true"
-				android:background="?attr/selectableItemBackgroundBorderless"
-				android:clickable="true"
-				android:padding="4dp"
-				android:src="@drawable/button_color"
-				android:tint="@android:color/black"/>
-
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_alignLeft="@id/paintColorPicker"
-				android:layout_alignRight="@id/paintColorPicker"
-				android:layout_below="@id/paintColorPicker"
-				android:gravity="center"
-				android:text="@string/color"
-				android:textAlignment="center"
-				android:textSize="10sp"/>
-
+			android:orientation="vertical">
 
 			<LinearLayout
-				android:id="@+id/paintSizeLayout"
-				android:layout_width="wrap_content"
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_alignBottom="@id/paintColorPicker"
-				android:layout_alignTop="@id/paintColorPicker"
-				android:layout_toRightOf="@id/paintColorPicker"
 				android:gravity="center"
-				android:orientation="horizontal"
-				android:padding="4dp">
+				android:orientation="horizontal">
 
 				<ImageView
-					android:id="@+id/paintSizeSmall"
-					android:layout_width="15dp"
-					android:layout_height="15dp"
+					android:id="@+id/paintButton"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
 					android:background="?attr/selectableItemBackgroundBorderless"
 					android:clickable="true"
 					android:padding="4dp"
-					android:src="@drawable/button_circle"
-					android:tint="@color/colorPrimary"/>
-
-				<ImageView
-					android:id="@+id/paintSizeMediumSmall"
-					android:layout_width="20dp"
-					android:layout_height="10dp"
-					android:background="?attr/selectableItemBackgroundBorderless"
-					android:clickable="true"
-					android:src="@drawable/button_circle"
+					android:src="@drawable/button_paint"
 					android:tint="@color/colorAccent"/>
 
 				<ImageView
-					android:id="@+id/paintSizeMediumLarge"
-					android:layout_width="25dp"
-					android:layout_height="15dp"
+					android:id="@+id/textButton"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
 					android:background="?attr/selectableItemBackgroundBorderless"
 					android:clickable="true"
-					android:src="@drawable/button_circle"
-					android:tint="@color/colorPrimary"/>
-
-				<ImageView
-					android:id="@+id/paintSizeLarge"
-					android:layout_width="30dp"
-					android:layout_height="20dp"
-					android:background="?attr/selectableItemBackgroundBorderless"
-					android:clickable="true"
-					android:src="@drawable/button_circle"
+					android:padding="4dp"
+					android:src="@drawable/button_text"
 					android:tint="@color/colorPrimary"/>
 			</LinearLayout>
 
-			<TextView
-				android:layout_width="wrap_content"
+			<RelativeLayout
+				android:id="@+id/paintToolsLayout"
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_alignLeft="@id/paintSizeLayout"
-				android:layout_alignRight="@id/paintSizeLayout"
-				android:layout_below="@id/paintSizeLayout"
-				android:gravity="center"
-				android:text="@string/brush_width"
-				android:textSize="10sp"/>
-		</RelativeLayout>
+				android:orientation="horizontal">
 
-		<RelativeLayout
-			android:id="@+id/textToolsLayout"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="horizontal"
-			android:visibility="gone">
+				<ImageView
+					android:id="@+id/paintColorPicker"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentLeft="true"
+					android:layout_alignParentTop="true"
+					android:background="?attr/selectableItemBackgroundBorderless"
+					android:clickable="true"
+					android:padding="4dp"
+					android:src="@drawable/button_color"
+					android:tint="@android:color/black"/>
 
-			<ImageView
-				android:id="@+id/textColorPicker"
-				android:layout_width="wrap_content"
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignLeft="@id/paintColorPicker"
+					android:layout_alignRight="@id/paintColorPicker"
+					android:layout_below="@id/paintColorPicker"
+					android:gravity="center"
+					android:text="@string/color"
+					android:textAlignment="center"
+					android:textSize="10sp"/>
+
+
+				<LinearLayout
+					android:id="@+id/paintSizeLayout"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignBottom="@id/paintColorPicker"
+					android:layout_alignTop="@id/paintColorPicker"
+					android:layout_toRightOf="@id/paintColorPicker"
+					android:gravity="center"
+					android:orientation="horizontal"
+					android:padding="4dp">
+
+					<ImageView
+						android:id="@+id/paintSizeSmall"
+						android:layout_width="15dp"
+						android:layout_height="15dp"
+						android:background="?attr/selectableItemBackgroundBorderless"
+						android:clickable="true"
+						android:padding="4dp"
+						android:src="@drawable/button_circle"
+						android:tint="@color/colorPrimary"/>
+
+					<ImageView
+						android:id="@+id/paintSizeMediumSmall"
+						android:layout_width="20dp"
+						android:layout_height="10dp"
+						android:background="?attr/selectableItemBackgroundBorderless"
+						android:clickable="true"
+						android:src="@drawable/button_circle"
+						android:tint="@color/colorAccent"/>
+
+					<ImageView
+						android:id="@+id/paintSizeMediumLarge"
+						android:layout_width="25dp"
+						android:layout_height="15dp"
+						android:background="?attr/selectableItemBackgroundBorderless"
+						android:clickable="true"
+						android:src="@drawable/button_circle"
+						android:tint="@color/colorPrimary"/>
+
+					<ImageView
+						android:id="@+id/paintSizeLarge"
+						android:layout_width="30dp"
+						android:layout_height="20dp"
+						android:background="?attr/selectableItemBackgroundBorderless"
+						android:clickable="true"
+						android:src="@drawable/button_circle"
+						android:tint="@color/colorPrimary"/>
+				</LinearLayout>
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignLeft="@id/paintSizeLayout"
+					android:layout_alignRight="@id/paintSizeLayout"
+					android:layout_below="@id/paintSizeLayout"
+					android:gravity="center"
+					android:text="@string/brush_width"
+					android:textSize="10sp"/>
+			</RelativeLayout>
+
+			<RelativeLayout
+				android:id="@+id/textToolsLayout"
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_alignParentLeft="true"
-				android:layout_alignParentTop="true"
-				android:background="?attr/selectableItemBackgroundBorderless"
-				android:clickable="true"
-				android:padding="4dp"
-				android:src="@drawable/button_color"
-				android:tint="@android:color/black"/>
+				android:orientation="horizontal"
+				android:visibility="gone">
 
-			<TextView
-				android:layout_width="wrap_content"
+				<ImageView
+					android:id="@+id/textColorPicker"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentLeft="true"
+					android:layout_alignParentTop="true"
+					android:background="?attr/selectableItemBackgroundBorderless"
+					android:clickable="true"
+					android:padding="4dp"
+					android:src="@drawable/button_color"
+					android:tint="@android:color/black"/>
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignLeft="@id/textColorPicker"
+					android:layout_alignRight="@id/textColorPicker"
+					android:layout_below="@id/textColorPicker"
+					android:gravity="center"
+					android:text="@string/color"
+					android:textAlignment="center"
+					android:textSize="10sp"/>
+
+				<NumberPicker
+					android:id="@+id/textSizePicker"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignBottom="@id/textColorPicker"
+					android:layout_alignTop="@id/textColorPicker"
+					android:layout_toRightOf="@id/textColorPicker"/>
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignLeft="@id/textSizePicker"
+					android:layout_alignRight="@id/textSizePicker"
+					android:layout_below="@id/textSizePicker"
+					android:gravity="center"
+					android:text="@string/text_size"
+					android:textSize="10sp"/>
+			</RelativeLayout>
+
+			<Button
+				android:id="@+id/createShareButton"
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_alignLeft="@id/textColorPicker"
-				android:layout_alignRight="@id/textColorPicker"
-				android:layout_below="@id/textColorPicker"
-				android:gravity="center"
-				android:text="@string/color"
-				android:textAlignment="center"
-				android:textSize="10sp"/>
-
-			<NumberPicker
-				android:id="@+id/textSizePicker"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_alignBottom="@id/textColorPicker"
-				android:layout_alignTop="@id/textColorPicker"
-				android:layout_toRightOf="@id/textColorPicker"/>
-
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_alignLeft="@id/textSizePicker"
-				android:layout_alignRight="@id/textSizePicker"
-				android:layout_below="@id/textSizePicker"
-				android:gravity="center"
-				android:text="@string/text_size"
-				android:textSize="10sp"/>
-		</RelativeLayout>
-	</LinearLayout>
-
-	<Button
-		android:id="@+id/createShareButton"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_below="@id/toolScrollView"
-		android:text="Create and Share"/>
+				android:layout_below="@id/toolScrollView"
+				android:text="Create and Share"/>
+		</LinearLayout>
+	</ScrollView>
 </RelativeLayout>

@@ -25,7 +25,7 @@ class EyeInTheSkyDetailFragment : Fragment() {
 	var dates: ArrayList<String> = ArrayList()
 	var curDateIndex: Int = 0
 
-	override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return container!!.inflate(R.layout.fragment_eyeintheskydetail)
 	}
 
@@ -33,8 +33,8 @@ class EyeInTheSkyDetailFragment : Fragment() {
 		super.onActivityCreated(savedInstanceState)
 
 		// get passed in arguments
-		latitude = arguments.getFloat(KEY_LATITUDE)
-		longitude = arguments.getFloat(KEY_LONGITUDE)
+		latitude = arguments!!.getFloat(KEY_LATITUDE)
+		longitude = arguments!!.getFloat(KEY_LONGITUDE)
 
 		val calendar = Calendar.getInstance()
 		calendar.add(Calendar.YEAR, -2)
@@ -54,7 +54,7 @@ class EyeInTheSkyDetailFragment : Fragment() {
 						if (results!!.isSuccessful) {
 							// load all the dates into our object
 							dates.clear()
-							results.body().results.forEach { dates.add(it.date) }
+							results.body()!!.results.forEach { dates.add(it.date) }
 							curDateIndex = dates.size - 1
 							// trim off everything after the T in the returned date string
 							loadImage(dates.last())
@@ -97,10 +97,10 @@ class EyeInTheSkyDetailFragment : Fragment() {
 
 					override fun onResponse(call: Call<NasaLocationResults>?, response: Response<NasaLocationResults>?) {
 						if (response!!.isSuccessful) {
-							loadApiResults(response.body())
+							loadApiResults(response.body()!!)
 						} else {
 							toast("Failed to retrieve data...")
-							fragmentManager.popBackStack()
+							fragmentManager!!.popBackStack()
 						}
 					}
 				})
